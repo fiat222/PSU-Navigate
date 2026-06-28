@@ -972,6 +972,7 @@ class PlaceDiscussion {
     required this.ratingLabel,
     required this.statusLabel,
     required this.comments,
+    this.rating = 4,
   });
 
   final IconData icon;
@@ -980,6 +981,7 @@ class PlaceDiscussion {
   final String ratingLabel;
   final String statusLabel;
   final List<CommentItem> comments;
+  final int rating;
 }
 
 class _CommunityScreenState extends State<_CommunityScreen> {
@@ -992,6 +994,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
       subtitle: '4.2 ดาว · เปิดอยู่ · คนหนาแน่นปานกลางจาก user online',
       ratingLabel: '128 รีวิว',
       statusLabel: 'เปิดอยู่',
+      rating: 4,
       comments: [
         const CommentItem(
           initials: 'นศ',
@@ -1024,6 +1027,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
       subtitle: '4.7 ดาว · เงียบ · ปลั๊กว่างชั้น 2',
       ratingLabel: '64 รีวิว',
       statusLabel: 'เปิดอยู่',
+      rating: 5,
       comments: const [
         CommentItem(
           initials: 'อศ',
@@ -1040,6 +1044,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
       subtitle: '3.9 ดาว · ทำความสะอาดล่าสุด 09:20',
       ratingLabel: '22 รีวิว',
       statusLabel: 'ตรวจล่าสุด',
+      rating: 4,
       comments: const [
         CommentItem(
           initials: 'ปท',
@@ -1241,13 +1246,26 @@ class _PlaceDiscussionCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        place.subtitle,
-                        style: const TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 12,
-                          height: 1.45,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Color(0xFFF3B443),
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              place.subtitle,
+                              style: const TextStyle(
+                                color: AppColors.muted,
+                                fontSize: 12,
+                                height: 1.45,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
