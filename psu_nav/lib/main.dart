@@ -215,6 +215,9 @@ class _TopBar extends StatelessWidget {
               ],
             ),
           ),
+
+          const _LiveDot(),
+          const SizedBox(width: 8),
           _IconButton(
             icon: Icons.notifications_outlined,
             onTap: () => onToast(
@@ -408,6 +411,14 @@ class _CampusMapPainter extends CustomPainter {
       Offset(size.width * .12, size.height * .28),
       Offset(size.width * .95, size.height * .78),
       road,
+    );
+
+    final myLocDot = Paint()..color = AppColors.campus2;
+    canvas.drawCircle(Offset(size.width * .22, size.height * .52), 6, myLocDot);
+    canvas.drawCircle(
+      Offset(size.width * .22, size.height * .52),
+      16,
+      Paint()..color = AppColors.campus2.withValues(alpha: .22),
     );
 
     final lake = Paint()..color = AppColors.lake;
@@ -935,7 +946,6 @@ class _EventsScreen extends StatelessWidget {
   }
 }
 
-
 class _CommunityScreen extends StatefulWidget {
   const _CommunityScreen({required this.desktop, required this.onToast});
 
@@ -1369,8 +1379,7 @@ class _ProfileScreen extends StatelessWidget {
                     'ENG-302 เริ่ม 09:00 · เตือนในแอปและอีเมลก่อน 15 นาที',
                 trailing: _IconButton(
                   icon: Icons.settings_outlined,
-                  onTap: () =>
-                      onToast('บันทึก notification preference แล้ว'),
+                  onTap: () => onToast('บันทึก notification preference แล้ว'),
                 ),
               ),
               const _InfoCard(
@@ -1516,7 +1525,6 @@ class _ProfileHeader extends StatelessWidget {
     );
   }
 }
-
 
 class _SearchRow extends StatelessWidget {
   const _SearchRow({
@@ -2296,6 +2304,30 @@ class _Avatar extends StatelessWidget {
           color: AppColors.campus,
           fontWeight: FontWeight.w900,
           fontSize: 12,
+        ),
+      ),
+    );
+  }
+}
+
+class _LiveDot extends StatelessWidget {
+  const _LiveDot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: const BoxDecoration(
+        color: Color(0xFF2BBE6A),
+        shape: BoxShape.circle,
+      ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(color: Color(0xFF2BBE6A), blurRadius: 4, spreadRadius: 1),
+          ],
         ),
       ),
     );
