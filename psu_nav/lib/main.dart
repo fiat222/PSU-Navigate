@@ -1,4 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide IconButton;
+
+import 'app/app_colors.dart';
+import 'widgets/action_button.dart';
+import 'widgets/avatar.dart';
+import 'widgets/icon_button.dart';
+import 'widgets/info_card.dart';
+import 'widgets/mini_icon.dart';
+import 'widgets/panel.dart';
+import 'widgets/responsive_list.dart';
+import 'widgets/right_pill.dart';
+import 'widgets/search_row.dart';
+import 'widgets/segmented.dart';
+import 'widgets/small_primary_button.dart';
+import 'widgets/soft_pill.dart';
+import 'widgets/status_chip.dart';
+import 'widgets/tabs.dart';
 
 void main() {
   runApp(const PsuNavigatorApp());
@@ -9,19 +25,6 @@ class MyApp extends PsuNavigatorApp {
 }
 
 enum AppSection { map, indoor, shuttle, events, community, profile }
-
-class AppColors {
-  static const ink = Color(0xFF101A2C);
-  static const muted = Color(0xFF667189);
-  static const paper = Color(0xFFF5F8FC);
-  static const line = Color(0xFFDBE4F2);
-  static const campus = Color(0xFF004A98);
-  static const campus2 = Color(0xFF1569C7);
-  static const lake = Color(0xFFC6E5F7);
-  static const road = Color(0xFFD6DFEC);
-  static const sun = Color(0xFFF3B443);
-  static const alert = Color(0xFFC94D3F);
-}
 
 class PsuNavigatorApp extends StatelessWidget {
   const PsuNavigatorApp({super.key});
@@ -218,7 +221,7 @@ class _TopBar extends StatelessWidget {
 
           const _LiveDot(),
           const SizedBox(width: 8),
-          _IconButton(
+          IconButton(
             icon: Icons.notifications_outlined,
             onTap: () => onToast(
               'เปิดศูนย์แจ้งเตือน: รถสาย 1, class ENG-301 และกิจกรรมที่ save ไว้',
@@ -293,7 +296,7 @@ class _MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _SearchRow(
+        SearchRow(
           value: 'ENG-301 อาคารวิศวกรรมศาสตร์ 1',
           trailing: Icons.tune,
           onTrailing: () =>
@@ -567,13 +570,13 @@ class _PlaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Panel(
+    return Panel(
       child: Column(
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _MiniIcon(Icons.apartment),
+              const MiniIcon(Icons.apartment),
               const SizedBox(width: 10),
               const Expanded(
                 child: Column(
@@ -594,14 +597,14 @@ class _PlaceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _StatusChip('เปิดอยู่'),
+              StatusChip('เปิดอยู่'),
             ],
           ),
           const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
-                child: _ActionButton(
+                child: ActionButton(
                   'นำทาง',
                   AppColors.campus,
                   () => onToast('เริ่ม route ไปอาคารวิศวกรรมศาสตร์ 1'),
@@ -609,11 +612,11 @@ class _PlaceCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _ActionButton('เข้าอาคาร', AppColors.campus2, onIndoor),
+                child: ActionButton('เข้าอาคาร', AppColors.campus2, onIndoor),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _ActionButton(
+                child: ActionButton(
                   'รีวิว',
                   const Color(0xFFEDF4FF),
                   onCommunity,
@@ -643,12 +646,12 @@ class _IndoorScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _SearchRow(
+        SearchRow(
           value: 'ENG-301 ห้องบรรยายรวม',
           leading: Icons.arrow_back,
           onLeading: () => onSectionSelected(AppSection.map),
         ),
-        _Tabs(
+        Tabs(
           labels: const ['ชั้น 1', 'ชั้น 2', 'ชั้น 3', 'ชั้น 4', 'ชั้น 5'],
           selected: 2,
         ),
@@ -736,10 +739,10 @@ class _IndoorScreen extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  _SoftPill('120 ที่นั่ง'),
-                  _SoftPill('Projector + AC'),
-                  _SoftPill('08:00-17:00'),
-                  _SoftPill('rating 4.6'),
+                  SoftPill('120 ที่นั่ง'),
+                  SoftPill('Projector + AC'),
+                  SoftPill('08:00-17:00'),
+                  SoftPill('rating 4.6'),
                 ],
               ),
             ],
@@ -857,28 +860,28 @@ class _ShuttleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _Tabs(
+        Tabs(
           labels: const ['สาย 1', 'สาย 2', 'สาย 3', 'Saved stop'],
           selected: 0,
         ),
         Expanded(
-          child: _ResponsiveList(
+          child: ResponsiveList(
             desktop: desktop,
             children: [
-              _InfoCard(
+              InfoCard(
                 icon: Icons.directions_bus_outlined,
                 title: 'สาย 1 · คันที่ 3',
                 subtitle:
                     'จากท่ารถ A ไปโรงอาหารกลาง · ข้อมูล cache ล่าสุด 07:42',
-                trailing: const _RightPill('3 นาที'),
+                trailing: const RightPill('3 นาที'),
                 child: const _Timeline(),
               ),
-              _InfoCard(
+              InfoCard(
                 icon: Icons.notifications_outlined,
                 title: 'แจ้งเตือนป้ายประจำ',
                 subtitle:
                     'เตือนก่อนรถออก 5 นาที และยังดูตารางล่าสุดได้แม้ออฟไลน์',
-                trailing: _SmallPrimaryButton(
+                trailing: SmallPrimaryButton(
                   'เปิด',
                   () => onToast(
                     'เปิด push notification สำหรับป้ายวิศวกรรมศาสตร์ 1 แล้ว',
@@ -903,37 +906,37 @@ class _EventsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _Tabs(
+        Tabs(
           labels: const ['วันนี้', 'สัปดาห์นี้', 'Plan', 'Activity'],
           selected: 0,
         ),
         Expanded(
-          child: _ResponsiveList(
+          child: ResponsiveList(
             desktop: desktop,
             children: [
-              const _InfoCard(
+              const InfoCard(
                 icon: Icons.event_outlined,
                 title: 'Hackathon: Smart Campus',
                 subtitle:
                     'กิจกรรมจริง · ปักหมุดที่วิศวกรรม 1 · หมดเวลาโพสต์ 18:00',
-                trailing: _RightPill('เข้าร่วม'),
+                trailing: RightPill('เข้าร่วม'),
               ),
-              _InfoCard(
+              InfoCard(
                 icon: Icons.groups_outlined,
                 title: 'หาเพื่อนไปกินข้าวเที่ยง',
                 subtitle:
                     'Plan mode · รอคนสนใจ 4/6 · ถ้าหมดเวลาจะเก็บไว้ 2 ชม. แล้วลบ',
-                trailing: _SmallPrimaryButton(
+                trailing: SmallPrimaryButton(
                   'สนใจ',
                   () => onToast('ส่งความสนใจเข้าร่วม plan แล้ว'),
                 ),
               ),
-              _InfoCard(
+              InfoCard(
                 icon: Icons.chat_bubble_outline,
                 title: 'สุ่มหาเพื่อนแชทชั่วคราว',
                 subtitle:
                     'จับคู่จากผู้ใช้ online ใน campus · แชทจะลบหลังออกครบ 5 นาที',
-                trailing: _SmallPrimaryButton(
+                trailing: SmallPrimaryButton(
                   'สุ่ม',
                   () => onToast('กำลังสุ่มจับคู่กับผู้ใช้ online ใกล้คุณ'),
                 ),
@@ -1109,13 +1112,13 @@ class _CommunityScreenState extends State<_CommunityScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: _Segmented(
+                  child: Segmented(
                     labels: const ['สถานที่', 'ยอดนิยม', 'ล่าสุด'],
                     selected: 0,
                   ),
                 ),
                 const SizedBox(width: 10),
-                _IconButton(
+                IconButton(
                   icon: Icons.star_border,
                   onTap: () =>
                       widget.onToast('ให้คะแนนสถานที่เมื่อเปิดหน้ารายละเอียด'),
@@ -1145,11 +1148,11 @@ class _CommunityScreenState extends State<_CommunityScreen> {
     }
 
     final children = [
-      _InfoCard(
+      InfoCard(
         icon: place.icon,
         title: place.name,
         subtitle: place.subtitle,
-        trailing: _RightPill(place.ratingLabel),
+        trailing: RightPill(place.ratingLabel),
       ),
       for (final comment in place.comments) _CommentCard(comment: comment),
       const _ModerationCard(),
@@ -1157,7 +1160,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
 
     return Column(
       children: [
-        _SearchRow(
+        SearchRow(
           value: place.name,
           leading: Icons.arrow_back,
           onLeading: () => setState(() => _selectedPlaceIndex = null),
@@ -1169,18 +1172,18 @@ class _CommunityScreenState extends State<_CommunityScreen> {
           child: Row(
             children: [
               Expanded(
-                child: _Segmented(
+                child: Segmented(
                   labels: const ['ล่าสุด', 'ยอดนิยม', 'รูปภาพ'],
                   selected: 0,
                 ),
               ),
               const SizedBox(width: 10),
-              _StatusChip(place.statusLabel),
+              StatusChip(place.statusLabel),
             ],
           ),
         ),
         Expanded(
-          child: _ResponsiveList(desktop: widget.desktop, children: children),
+          child: ResponsiveList(desktop: widget.desktop, children: children),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
@@ -1190,7 +1193,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
           ),
           child: Row(
             children: [
-              _IconButton(
+              IconButton(
                 icon: Icons.image_outlined,
                 onTap: () =>
                     widget.onToast('เลือกรูปได้สูงสุด 3 รูปต่อคอมเมนต์'),
@@ -1214,7 +1217,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              _IconButton(icon: Icons.send_outlined, onTap: _post),
+              IconButton(icon: Icons.send_outlined, onTap: _post),
             ],
           ),
         ),
@@ -1235,14 +1238,14 @@ class _PlaceDiscussionCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: _Panel(
+      child: Panel(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _MiniIcon(place.icon),
+                MiniIcon(place.icon),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -1284,7 +1287,7 @@ class _PlaceDiscussionCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    _RightPill(place.ratingLabel),
+                    RightPill(place.ratingLabel),
                     const SizedBox(height: 8),
                     const Icon(
                       Icons.chevron_right,
@@ -1312,7 +1315,7 @@ class _PlaceDiscussionCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _Avatar(comment.initials),
+                      Avatar(comment.initials),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Container(
@@ -1368,26 +1371,26 @@ class _ProfileScreen extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: _ResponsiveList(
+          child: ResponsiveList(
             desktop: desktop,
             children: [
               _ProfileHeader(onToast: onToast),
-              _InfoCard(
+              InfoCard(
                 icon: Icons.notifications_outlined,
                 title: 'ตารางเรียนและกิจกรรม',
                 subtitle:
                     'ENG-302 เริ่ม 09:00 · เตือนในแอปและอีเมลก่อน 15 นาที',
-                trailing: _IconButton(
+                trailing: IconButton(
                   icon: Icons.settings_outlined,
                   onTap: () => onToast('บันทึก notification preference แล้ว'),
                 ),
               ),
-              const _InfoCard(
+              const InfoCard(
                 icon: Icons.cloud_done_outlined,
                 title: 'Offline cache',
                 subtitle:
                     'ตารางรถ, floor plan, place summary และรีวิวล่าสุดถูก cache ในเครื่อง',
-                trailing: _RightPill('ready'),
+                trailing: RightPill('ready'),
               ),
             ],
           ),
@@ -1526,195 +1529,6 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-class _SearchRow extends StatelessWidget {
-  const _SearchRow({
-    required this.value,
-    this.leading,
-    this.trailing,
-    this.onLeading,
-    this.onTrailing,
-  });
-
-  final String value;
-  final IconData? leading;
-  final IconData? trailing;
-  final VoidCallback? onLeading;
-  final VoidCallback? onTrailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          if (leading != null) ...[
-            _IconButton(icon: leading!, onTap: onLeading),
-            const SizedBox(width: 10),
-          ],
-          Expanded(
-            child: Container(
-              height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.line),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: AppColors.ink, size: 18),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      value,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.ink),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (trailing != null) ...[
-            const SizedBox(width: 10),
-            _IconButton(icon: trailing!, onTap: onTrailing),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _Tabs extends StatelessWidget {
-  const _Tabs({required this.labels, required this.selected});
-
-  final List<String> labels;
-  final int selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final active = index == selected;
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              color: active ? AppColors.campus : Colors.white,
-              border: Border.all(
-                color: active ? AppColors.campus : AppColors.line,
-              ),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              labels[index],
-              style: TextStyle(
-                color: active ? Colors.white : AppColors.muted,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          );
-        },
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemCount: labels.length,
-      ),
-    );
-  }
-}
-
-class _ResponsiveList extends StatelessWidget {
-  const _ResponsiveList({required this.desktop, required this.children});
-
-  final bool desktop;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!desktop) {
-      return ListView.separated(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-        itemBuilder: (context, index) => children[index],
-        separatorBuilder: (_, _) => const SizedBox(height: 10),
-        itemCount: children.length,
-      );
-    }
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(22, 0, 22, 12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 2.35,
-      ),
-      itemBuilder: (context, index) => children[index],
-      itemCount: children.length,
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    this.trailing,
-    this.child,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget? trailing;
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Panel(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _MiniIcon(icon),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 12,
-                        height: 1.45,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-            ],
-          ),
-          if (child != null) ...[const SizedBox(height: 10), child!],
-        ],
-      ),
-    );
-  }
-}
-
 class _CommentCard extends StatelessWidget {
   const _CommentCard({required this.comment});
 
@@ -1722,14 +1536,14 @@ class _CommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Panel(
+    return Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _Avatar(comment.initials),
+              Avatar(comment.initials),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -1777,7 +1591,7 @@ class _CommentCard extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Avatar(reply.initials),
+                          Avatar(reply.initials),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Container(
@@ -1848,7 +1662,7 @@ class _ModerationCard extends StatelessWidget {
       child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Avatar('--'),
+          Avatar('--'),
           SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -1878,7 +1692,7 @@ class _ModerationCard extends StatelessWidget {
               ],
             ),
           ),
-          _RightPill('hidden', alert: true),
+          RightPill('hidden', alert: true),
         ],
       ),
     );
@@ -2048,262 +1862,6 @@ class _NavItem extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Panel extends StatelessWidget {
-  const _Panel({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .94),
-        border: Border.all(color: AppColors.line),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: child,
-    );
-  }
-}
-
-class _MiniIcon extends StatelessWidget {
-  const _MiniIcon(this.icon);
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 34,
-      height: 34,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9F2FF),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Icon(icon, color: AppColors.campus, size: 18),
-    );
-  }
-}
-
-class _IconButton extends StatelessWidget {
-  const _IconButton({required this.icon, this.onTap});
-
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: AppColors.line),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: AppColors.ink, size: 18),
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton(
-    this.label,
-    this.background,
-    this.onTap, {
-    this.foreground = Colors.white,
-  });
-
-  final String label;
-  final Color background;
-  final Color foreground;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: onTap,
-      style: FilledButton.styleFrom(
-        backgroundColor: background,
-        foregroundColor: foreground,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(vertical: 10),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-}
-
-class _SmallPrimaryButton extends StatelessWidget {
-  const _SmallPrimaryButton(this.label, this.onTap);
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return FilledButton(
-      onPressed: onTap,
-      style: FilledButton.styleFrom(
-        backgroundColor: AppColors.campus,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        minimumSize: Size.zero,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-}
-
-class _RightPill extends StatelessWidget {
-  const _RightPill(this.label, {this.alert = false});
-
-  final String label;
-  final bool alert;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: alert ? const Color(0xFFFDECEA) : const Color(0xFFEEF5F8),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: alert ? AppColors.alert : AppColors.campus2,
-          fontSize: 11,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAF2FF),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppColors.campus,
-          fontSize: 11,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _SoftPill extends StatelessWidget {
-  const _SoftPill(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF0F5FB),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(color: AppColors.muted, fontSize: 11),
-      ),
-    );
-  }
-}
-
-class _Segmented extends StatelessWidget {
-  const _Segmented({required this.labels, required this.selected});
-
-  final List<String> labels;
-  final int selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: AppColors.line),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          for (var i = 0; i < labels.length; i++)
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 9),
-                color: i == selected ? AppColors.campus : Colors.transparent,
-                alignment: Alignment.center,
-                child: Text(
-                  labels[i],
-                  style: TextStyle(
-                    color: i == selected ? Colors.white : AppColors.muted,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  const _Avatar(this.initials);
-
-  final String initials;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 34,
-      height: 34,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE9F2FF),
-        borderRadius: BorderRadius.circular(9),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: const TextStyle(
-          color: AppColors.campus,
-          fontWeight: FontWeight.w900,
-          fontSize: 12,
         ),
       ),
     );
