@@ -363,44 +363,13 @@ class _PlaceDiscussionCard extends StatelessWidget {
               for (final comment in previewComments)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Avatar(comment.initials),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF6F8FC),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${comment.name} · ${comment.time}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 11,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                comment.text,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.muted,
-                                  fontSize: 11,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: CommentBubble(
+                    initials: comment.initials,
+                    name: comment.name,
+                    time: comment.time,
+                    text: comment.text,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
             ],
@@ -422,43 +391,26 @@ class _CommentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Avatar(comment.initials),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${comment.name} · ${comment.time}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      comment.text,
-                      style: const TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 12,
-                        height: 1.45,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 12,
-                      children: [
-                        Text('ถูกใจ ${comment.likes}', style: _toolText),
-                        const Text('ตอบกลับ', style: _toolText),
-                        const Text('รายงาน', style: _toolText),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+          CommentBubble(
+            initials: comment.initials,
+            name: comment.name,
+            time: comment.time,
+            text: comment.text,
+            boxed: false,
+            avatarGap: 10,
+            metaStyle: const TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 12,
+            ),
+            textStyle: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12,
+              height: 1.45,
+            ),
+            actions: [
+              Text('ถูกใจ ${comment.likes}', style: _toolText),
+              const Text('ตอบกลับ', style: _toolText),
+              const Text('รายงาน', style: _toolText),
             ],
           ),
           if (comment.replies.isNotEmpty) ...[
@@ -470,52 +422,14 @@ class _CommentCard extends StatelessWidget {
                   for (final reply in comment.replies)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Avatar(reply.initials),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF6F8FC),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${reply.name} · ${reply.time}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    reply.text,
-                                    style: const TextStyle(
-                                      color: AppColors.muted,
-                                      fontSize: 11,
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Wrap(
-                                    spacing: 12,
-                                    children: [
-                                      Text(
-                                        'ถูกใจ ${reply.likes}',
-                                        style: _toolText,
-                                      ),
-                                      const Text('ตอบกลับ', style: _toolText),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                      child: CommentBubble(
+                        initials: reply.initials,
+                        name: reply.name,
+                        time: reply.time,
+                        text: reply.text,
+                        actions: [
+                          Text('ถูกใจ ${reply.likes}', style: _toolText),
+                          const Text('ตอบกลับ', style: _toolText),
                         ],
                       ),
                     ),

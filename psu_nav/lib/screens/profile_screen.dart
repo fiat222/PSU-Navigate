@@ -116,49 +116,21 @@ class _ProfileHeader extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: GestureDetector(
+                child: ProfileActionButton(
+                  label: 'แก้ไขโปรไฟล์',
                   onTap: () => onToast('เปิดหน้าแก้ไขโปรไฟล์'),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'แก้ไขโปรไฟล์',
-                      style: TextStyle(
-                        color: AppColors.campus,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.campus,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: GestureDetector(
+                child: ProfileActionButton(
+                  label: 'ออกจากระบบ',
                   onTap: () => onToast('ออกจากระบบ PSU SSO'),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .12),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: .30),
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'ออกจากระบบ',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
+                  backgroundColor: Colors.white.withValues(alpha: .12),
+                  foregroundColor: Colors.white,
+                  borderColor: Colors.white.withValues(alpha: .30),
                 ),
               ),
             ],
