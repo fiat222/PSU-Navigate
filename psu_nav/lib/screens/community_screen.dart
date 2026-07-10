@@ -1,128 +1,32 @@
 part of '../main.dart';
 
-class _CommunityScreen extends StatefulWidget {
+class _CommunityScreen extends StatelessWidget {
   const _CommunityScreen({required this.desktop, required this.onToast});
 
   final bool desktop;
   final ValueChanged<String> onToast;
 
   @override
-  State<_CommunityScreen> createState() => _CommunityScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => CommunityBloc(),
+      child: _CommunityBody(desktop: desktop, onToast: onToast),
+    );
+  }
 }
 
-class CommentItem {
-  const CommentItem({
-    required this.initials,
-    required this.name,
-    required this.text,
-    this.time = 'เมื่อสักครู่',
-    this.likes = 0,
-    this.replies = const [],
-  });
+class _CommunityBody extends StatefulWidget {
+  const _CommunityBody({required this.desktop, required this.onToast});
 
-  final String initials;
-  final String name;
-  final String text;
-  final String time;
-  final int likes;
-  final List<CommentItem> replies;
+  final bool desktop;
+  final ValueChanged<String> onToast;
+
+  @override
+  State<_CommunityBody> createState() => _CommunityBodyState();
 }
 
-class PlaceDiscussion {
-  PlaceDiscussion({
-    required this.icon,
-    required this.name,
-    required this.subtitle,
-    required this.ratingLabel,
-    required this.statusLabel,
-    required this.comments,
-    this.rating = 4,
-  });
-
-  final IconData icon;
-  final String name;
-  final String subtitle;
-  final String ratingLabel;
-  final String statusLabel;
-  final List<CommentItem> comments;
-  final int rating;
-}
-
-class _CommunityScreenState extends State<_CommunityScreen> {
+class _CommunityBodyState extends State<_CommunityBody> {
   final TextEditingController _controller = TextEditingController();
-  int? _selectedPlaceIndex;
-  late final List<PlaceDiscussion> _places = [
-    PlaceDiscussion(
-      icon: Icons.restaurant_outlined,
-      name: 'โรงอาหารกลาง',
-      subtitle: '4.2 ดาว · เปิดอยู่ · คนหนาแน่นปานกลางจาก user online',
-      ratingLabel: '128 รีวิว',
-      statusLabel: 'เปิดอยู่',
-      rating: 4,
-      comments: [
-        const CommentItem(
-          initials: 'นศ',
-          name: 'นศ.ปี 1',
-          text: 'ตอนเที่ยงแถวร้านข้าวมันไก่สั้นสุด มีโต๊ะว่างฝั่งซ้าย',
-          time: '5 นาทีที่แล้ว',
-          likes: 18,
-          replies: [
-            CommentItem(
-              initials: 'จน',
-              name: 'เจน',
-              text: 'จริง วันนี้ฝั่งซ้ายโล่งกว่า',
-              time: '2 นาทีที่แล้ว',
-              likes: 3,
-            ),
-            CommentItem(
-              initials: 'มข',
-              name: 'มิ้น',
-              text: 'ขอบคุณมาก เดี๋ยวแวะไปตรงนั้นเลย',
-              time: 'เมื่อสักครู่',
-              likes: 1,
-            ),
-          ],
-        ),
-      ],
-    ),
-    PlaceDiscussion(
-      icon: Icons.local_library_outlined,
-      name: 'ห้องสมุดกลาง',
-      subtitle: '4.7 ดาว · เงียบ · ปลั๊กว่างชั้น 2',
-      ratingLabel: '64 รีวิว',
-      statusLabel: 'เปิดอยู่',
-      rating: 5,
-      comments: const [
-        CommentItem(
-          initials: 'อศ',
-          name: 'ออย',
-          text: 'ชั้น 2 ฝั่งหน้าต่างเงียบมาก เหมาะกับอ่านหนังสือยาวๆ',
-          time: '12 นาทีที่แล้ว',
-          likes: 11,
-        ),
-      ],
-    ),
-    PlaceDiscussion(
-      icon: Icons.wc_outlined,
-      name: 'ห้องน้ำอาคาร 15',
-      subtitle: '3.9 ดาว · ทำความสะอาดล่าสุด 09:20',
-      ratingLabel: '22 รีวิว',
-      statusLabel: 'ตรวจล่าสุด',
-      rating: 4,
-      comments: const [
-        CommentItem(
-          initials: 'ปท',
-          name: 'ปาล์ม',
-          text: 'ฝั่งขวาสะอาดกว่า และมีทิชชู่ครบ',
-          time: '28 นาทีที่แล้ว',
-          likes: 6,
-        ),
-      ],
-    ),
-  ];
-
-  PlaceDiscussion? get _selectedPlace =>
-      _selectedPlaceIndex == null ? null : _places[_selectedPlaceIndex!];
 
   @override
   void dispose() {
@@ -130,74 +34,109 @@ class _CommunityScreenState extends State<_CommunityScreen> {
     super.dispose();
   }
 
-  void _post() {
-    final text = _controller.text.trim();
-    if (text.isEmpty) {
-      widget.onToast('พิมพ์คอมเมนต์ก่อนส่ง');
-      return;
-    }
-    final place = _selectedPlace;
-    if (place == null) {
-      widget.onToast('เลือกสถานที่ก่อนส่งคอมเมนต์');
-      return;
-    }
-    setState(() {
-      place.comments.insert(
-        0,
-        CommentItem(initials: 'คุณ', name: 'คุณ', text: text, likes: 0),
-      );
-      _controller.clear();
-    });
-    widget.onToast('คอมเมนต์ใหม่แสดงทันทีผ่าน live feed');
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<CommunityBloc, CommunityState>(
+      listenWhen: (prev, curr) => curr.toastMessage != prev.toastMessage && curr.toastMessage != null,
+      listener: (context, state) {
+        if (state.toastMessage != null) {
+          widget.onToast(state.toastMessage!);
+        }
+      },
+      child: BlocBuilder<CommunityBloc, CommunityState>(
+        builder: (context, state) {
+          final place = state.selectedPlace;
+
+          if (place == null) {
+            return _PlaceListView(
+              places: state.places,
+              onToast: widget.onToast,
+            );
+          }
+
+          return _PlaceDetailView(
+            place: place,
+            desktop: widget.desktop,
+            controller: _controller,
+            onToast: widget.onToast,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PlaceListView extends StatelessWidget {
+  const _PlaceListView({required this.places, required this.onToast});
+
+  final List<PlaceDiscussion> places;
+  final ValueChanged<String> onToast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Segmented(
+                  labels: const ['สถานที่', 'ยอดนิยม', 'ล่าสุด'],
+                  selected: 0,
+                ),
+              ),
+              const SizedBox(width: 10),
+              IconButton(
+                icon: Icons.star_border,
+                onTap: () =>
+                    onToast('ให้คะแนนสถานที่เมื่อเปิดหน้ารายละเอียด'),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            itemCount: places.length + 1,
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              if (index == places.length) {
+                return const _ModerationCard();
+              }
+
+              return _PlaceDiscussionCard(
+                place: places[index],
+                onTap: () => context.read<CommunityBloc>().add(SelectPlace(index)),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlaceDetailView extends StatelessWidget {
+  const _PlaceDetailView({
+    required this.place,
+    required this.desktop,
+    required this.controller,
+    required this.onToast,
+  });
+
+  final PlaceDiscussion place;
+  final bool desktop;
+  final TextEditingController controller;
+  final ValueChanged<String> onToast;
+
+  void _post(BuildContext context) {
+    context.read<CommunityBloc>().add(PostComment(controller.text));
+    controller.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final place = _selectedPlace;
-
-    if (place == null) {
-      return Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Segmented(
-                    labels: const ['สถานที่', 'ยอดนิยม', 'ล่าสุด'],
-                    selected: 0,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  icon: Icons.star_border,
-                  onTap: () =>
-                      widget.onToast('ให้คะแนนสถานที่เมื่อเปิดหน้ารายละเอียด'),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-              itemCount: _places.length + 1,
-              separatorBuilder: (_, _) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                if (index == _places.length) {
-                  return const _ModerationCard();
-                }
-
-                return _PlaceDiscussionCard(
-                  place: _places[index],
-                  onTap: () => setState(() => _selectedPlaceIndex = index),
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    }
-
     final children = [
       InfoCard(
         icon: place.icon,
@@ -214,9 +153,9 @@ class _CommunityScreenState extends State<_CommunityScreen> {
         SearchRow(
           value: place.name,
           leading: Icons.arrow_back,
-          onLeading: () => setState(() => _selectedPlaceIndex = null),
+          onLeading: () => context.read<CommunityBloc>().add(DeselectPlace()),
           trailing: Icons.star_border,
-          onTrailing: () => widget.onToast('ให้คะแนนสถานที่นี้ 5 ดาว'),
+          onTrailing: () => onToast('ให้คะแนนสถานที่นี้ 5 ดาว'),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -234,7 +173,7 @@ class _CommunityScreenState extends State<_CommunityScreen> {
           ),
         ),
         Expanded(
-          child: ResponsiveList(desktop: widget.desktop, children: children),
+          child: ResponsiveList(desktop: desktop, children: children),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
@@ -247,12 +186,12 @@ class _CommunityScreenState extends State<_CommunityScreen> {
               IconButton(
                 icon: Icons.image_outlined,
                 onTap: () =>
-                    widget.onToast('เลือกรูปได้สูงสุด 3 รูปต่อคอมเมนต์'),
+                    onToast('เลือกรูปได้สูงสุด 3 รูปต่อคอมเมนต์'),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
-                  controller: _controller,
+                  controller: controller,
                   decoration: InputDecoration(
                     hintText: 'แชร์ข้อมูลสถานที่นี้...',
                     isDense: true,
@@ -264,11 +203,11 @@ class _CommunityScreenState extends State<_CommunityScreen> {
                       borderSide: const BorderSide(color: AppColors.line),
                     ),
                   ),
-                  onSubmitted: (_) => _post(),
+                  onSubmitted: (_) => _post(context),
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton(icon: Icons.send_outlined, onTap: _post),
+              IconButton(icon: Icons.send_outlined, onTap: () => _post(context)),
             ],
           ),
         ),

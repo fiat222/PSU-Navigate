@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart' hide IconButton;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app/app_colors.dart';
+import 'bloc/community/community_bloc.dart';
+import 'bloc/community/community_event.dart';
+import 'bloc/community/community_state.dart';
+import 'models/comment_item.dart';
+import 'models/place_discussion.dart';
 import 'widgets/action_button.dart';
 import 'widgets/avatar.dart';
 import 'widgets/comment_bubble.dart';
