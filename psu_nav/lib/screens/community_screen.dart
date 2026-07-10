@@ -1,7 +1,26 @@
-part of '../main.dart';
+import 'package:flutter/material.dart' hide IconButton;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class _CommunityScreen extends StatelessWidget {
-  const _CommunityScreen({required this.desktop, required this.onToast});
+import '../app/app_colors.dart';
+import '../bloc/community/community_bloc.dart';
+import '../bloc/community/community_event.dart';
+import '../bloc/community/community_state.dart';
+import '../models/comment_item.dart';
+import '../models/place_discussion.dart';
+import '../widgets/avatar.dart';
+import '../widgets/comment_bubble.dart';
+import '../widgets/icon_button.dart';
+import '../widgets/info_card.dart';
+import '../widgets/mini_icon.dart';
+import '../widgets/panel.dart';
+import '../widgets/responsive_list.dart';
+import '../widgets/right_pill.dart';
+import '../widgets/search_row.dart';
+import '../widgets/segmented.dart';
+import '../widgets/status_chip.dart';
+
+class CommunityScreen extends StatelessWidget {
+  const CommunityScreen({super.key, required this.desktop, required this.onToast});
 
   final bool desktop;
   final ValueChanged<String> onToast;

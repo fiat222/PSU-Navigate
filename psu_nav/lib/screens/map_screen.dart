@@ -1,14 +1,23 @@
-part of '../main.dart';
+import 'package:flutter/material.dart' hide IconButton;
 
-class _MapScreen extends StatelessWidget {
-  const _MapScreen({
+import '../app/app_colors.dart';
+import '../routes/app_routes.dart';
+import '../widgets/action_button.dart';
+import '../widgets/mini_icon.dart';
+import '../widgets/panel.dart';
+import '../widgets/search_row.dart';
+import '../widgets/status_chip.dart';
+
+class MapScreen extends StatelessWidget {
+  const MapScreen({
+    super.key,
     required this.desktop,
-    required this.onSectionSelected,
+    required this.onSectionChanged,
     required this.onToast,
   });
 
   final bool desktop;
-  final ValueChanged<AppSection> onSectionSelected;
+  final void Function(String route) onSectionChanged;
   final ValueChanged<String> onToast;
 
   @override
@@ -49,7 +58,7 @@ class _MapScreen extends StatelessWidget {
                     label: 'วิศวกรรม 1',
                     color: AppColors.campus,
                     onTap: () {
-                      onSectionSelected(AppSection.indoor);
+                      onSectionChanged(AppRoutes.indoor);
                       onToast(
                         'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
                       );
@@ -61,7 +70,7 @@ class _MapScreen extends StatelessWidget {
                     icon: Icons.restaurant_outlined,
                     label: 'โรงอาหารกลาง',
                     color: AppColors.sun,
-                    onTap: () => onSectionSelected(AppSection.community),
+                    onTap: () => onSectionChanged(AppRoutes.community),
                   ),
                   _MapPin(
                     left: .29,
@@ -69,16 +78,16 @@ class _MapScreen extends StatelessWidget {
                     icon: Icons.directions_bus_outlined,
                     label: 'ป้ายรถ A',
                     color: AppColors.campus2,
-                    onTap: () => onSectionSelected(AppSection.shuttle),
+                    onTap: () => onSectionChanged(AppRoutes.shuttle),
                   ),
                   Positioned(
                     left: 12,
                     right: 12,
                     bottom: 12,
                     child: _PlaceCard(
-                      onIndoor: () => onSectionSelected(AppSection.indoor),
+                      onIndoor: () => onSectionChanged(AppRoutes.indoor),
                       onCommunity: () =>
-                          onSectionSelected(AppSection.community),
+                          onSectionChanged(AppRoutes.community),
                       onToast: onToast,
                     ),
                   ),

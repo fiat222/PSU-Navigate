@@ -1,7 +1,14 @@
-part of '../main.dart';
+import 'package:flutter/material.dart' hide IconButton;
 
-class _ProfileScreen extends StatelessWidget {
-  const _ProfileScreen({required this.desktop, required this.onToast});
+import '../app/app_colors.dart';
+import '../widgets/icon_button.dart';
+import '../widgets/info_card.dart';
+import '../widgets/profile_action_button.dart';
+import '../widgets/responsive_list.dart';
+import '../widgets/right_pill.dart';
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key, required this.desktop, required this.onToast});
 
   final bool desktop;
   final ValueChanged<String> onToast;

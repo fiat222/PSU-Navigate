@@ -1,35 +1,9 @@
 import 'package:flutter/material.dart' hide IconButton;
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app/app_colors.dart';
-import 'bloc/community/community_bloc.dart';
-import 'bloc/community/community_event.dart';
-import 'bloc/community/community_state.dart';
-import 'models/comment_item.dart';
-import 'models/place_discussion.dart';
-import 'widgets/action_button.dart';
-import 'widgets/avatar.dart';
-import 'widgets/comment_bubble.dart';
+import 'routes/app_routes.dart';
+import 'routes/route_generator.dart';
 import 'widgets/icon_button.dart';
-import 'widgets/info_card.dart';
-import 'widgets/mini_icon.dart';
-import 'widgets/panel.dart';
-import 'widgets/profile_action_button.dart';
-import 'widgets/responsive_list.dart';
-import 'widgets/right_pill.dart';
-import 'widgets/search_row.dart';
-import 'widgets/segmented.dart';
-import 'widgets/small_primary_button.dart';
-import 'widgets/soft_pill.dart';
-import 'widgets/status_chip.dart';
-import 'widgets/tabs.dart';
-
-part 'screens/map_screen.dart';
-part 'screens/indoor_screen.dart';
-part 'screens/shuttle_screen.dart';
-part 'screens/events_screen.dart';
-part 'screens/community_screen.dart';
-part 'screens/profile_screen.dart';
 
 void main() {
   runApp(const PsuNavigatorApp());
@@ -38,8 +12,6 @@ void main() {
 class MyApp extends PsuNavigatorApp {
   const MyApp({super.key});
 }
-
-enum AppSection { map, indoor, shuttle, events, community, profile }
 
 class PsuNavigatorApp extends StatelessWidget {
   const PsuNavigatorApp({super.key});
@@ -72,10 +44,10 @@ class NavigatorPrototypePage extends StatefulWidget {
 }
 
 class _NavigatorPrototypePageState extends State<NavigatorPrototypePage> {
-  AppSection _section = AppSection.map;
+  String _currentRoute = AppRoutes.map;
 
-  void _show(AppSection section) {
-    setState(() => _section = section);
+  void _navigateTo(String route) {
+    setState(() => _currentRoute = route);
   }
 
   void _toast(String message) {
@@ -99,9 +71,9 @@ class _NavigatorPrototypePageState extends State<NavigatorPrototypePage> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return _PrototypeShell(
-              section: _section,
+              currentRoute: _currentRoute,
               desktop: constraints.maxWidth >= 900,
-              onSectionSelected: _show,
+              onNavigate: _navigateTo,
               onToast: _toast,
             );
           },
@@ -113,27 +85,27 @@ class _NavigatorPrototypePageState extends State<NavigatorPrototypePage> {
 
 class _PrototypeShell extends StatelessWidget {
   const _PrototypeShell({
-    required this.section,
+    required this.currentRoute,
     required this.desktop,
-    required this.onSectionSelected,
+    required this.onNavigate,
     required this.onToast,
   });
 
-  final AppSection section;
+  final String currentRoute;
   final bool desktop;
-  final ValueChanged<AppSection> onSectionSelected;
+  final ValueChanged<String> onNavigate;
   final ValueChanged<String> onToast;
 
   @override
   Widget build(BuildContext context) {
     final content = Column(
       children: [
-        _TopBar(section: section, onToast: onToast),
+        _TopBar(currentRoute: currentRoute, onToast: onToast),
         Expanded(
-          child: _ScreenHost(
-            section: section,
+          child: RouteGenerator.screenFor(
+            currentRoute,
             desktop: desktop,
-            onSectionSelected: onSectionSelected,
+            onSectionChanged: onNavigate,
             onToast: onToast,
           ),
         ),
@@ -145,20 +117,20 @@ class _PrototypeShell extends StatelessWidget {
       child: desktop
           ? Column(
               children: [
-                _TopBar(section: section, onToast: onToast),
+                _TopBar(currentRoute: currentRoute, onToast: onToast),
                 Expanded(
                   child: Row(
                     children: [
                       _BottomNav(
-                        section: section,
+                        currentRoute: currentRoute,
                         desktop: true,
-                        onSelected: onSectionSelected,
+                        onSelected: onNavigate,
                       ),
                       Expanded(
-                        child: _ScreenHost(
-                          section: section,
+                        child: RouteGenerator.screenFor(
+                          currentRoute,
                           desktop: true,
-                          onSectionSelected: onSectionSelected,
+                          onSectionChanged: onNavigate,
                           onToast: onToast,
                         ),
                       ),
@@ -171,9 +143,9 @@ class _PrototypeShell extends StatelessWidget {
               children: [
                 Expanded(child: content),
                 _BottomNav(
-                  section: section,
+                  currentRoute: currentRoute,
                   desktop: false,
-                  onSelected: onSectionSelected,
+                  onSelected: onNavigate,
                 ),
               ],
             ),
@@ -182,9 +154,9 @@ class _PrototypeShell extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.section, required this.onToast});
+  const _TopBar({required this.currentRoute, required this.onToast});
 
-  final AppSection section;
+  final String currentRoute;
   final ValueChanged<String> onToast;
 
   @override
@@ -227,7 +199,7 @@ class _TopBar extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
                 ),
                 Text(
-                  _sectionSubtitle(section),
+                  RouteGenerator.subtitleFor(currentRoute),
                   style: const TextStyle(color: AppColors.muted, fontSize: 11),
                 ),
               ],
@@ -248,73 +220,25 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-String _sectionSubtitle(AppSection section) {
-  return switch (section) {
-    AppSection.map => 'Hat Yai campus · live',
-    AppSection.indoor => 'Indoor floor plan · Engineering 1',
-    AppSection.shuttle => 'Realtime shuttle · cached',
-    AppSection.events => 'Events and friend plans',
-    AppSection.community => 'Place reviews · live feed',
-    AppSection.profile => 'PSU account · notifications',
-  };
-}
-
-class _ScreenHost extends StatelessWidget {
-  const _ScreenHost({
-    required this.section,
-    required this.desktop,
-    required this.onSectionSelected,
-    required this.onToast,
-  });
-
-  final AppSection section;
-  final bool desktop;
-  final ValueChanged<AppSection> onSectionSelected;
-  final ValueChanged<String> onToast;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (section) {
-      AppSection.map => _MapScreen(
-        desktop: desktop,
-        onSectionSelected: onSectionSelected,
-        onToast: onToast,
-      ),
-      AppSection.indoor => _IndoorScreen(
-        desktop: desktop,
-        onSectionSelected: onSectionSelected,
-        onToast: onToast,
-      ),
-      AppSection.shuttle => _ShuttleScreen(desktop: desktop, onToast: onToast),
-      AppSection.events => _EventsScreen(desktop: desktop, onToast: onToast),
-      AppSection.community => _CommunityScreen(
-        desktop: desktop,
-        onToast: onToast,
-      ),
-      AppSection.profile => _ProfileScreen(desktop: desktop, onToast: onToast),
-    };
-  }
-}
-
 class _BottomNav extends StatelessWidget {
   const _BottomNav({
-    required this.section,
+    required this.currentRoute,
     required this.desktop,
     required this.onSelected,
   });
 
-  final AppSection section;
+  final String currentRoute;
   final bool desktop;
-  final ValueChanged<AppSection> onSelected;
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
     final items = [
-      (AppSection.map, Icons.map_outlined, 'แผนที่'),
-      (AppSection.shuttle, Icons.directions_bus_outlined, 'รถ'),
-      (AppSection.events, Icons.event_outlined, 'กิจกรรม'),
-      (AppSection.community, Icons.forum_outlined, 'ชุมชน'),
-      (AppSection.profile, Icons.person_outline, 'ฉัน'),
+      (AppRoutes.map, Icons.map_outlined, 'แผนที่'),
+      (AppRoutes.shuttle, Icons.directions_bus_outlined, 'รถ'),
+      (AppRoutes.events, Icons.event_outlined, 'กิจกรรม'),
+      (AppRoutes.community, Icons.forum_outlined, 'ชุมชน'),
+      (AppRoutes.profile, Icons.person_outline, 'ฉัน'),
     ];
 
     return Container(
@@ -332,7 +256,7 @@ class _BottomNav extends StatelessWidget {
                   .map(
                     (item) => _NavItem(
                       item: item,
-                      active: item.$1 == section,
+                      active: item.$1 == currentRoute,
                       onTap: onSelected,
                       desktop: true,
                     ),
@@ -345,7 +269,7 @@ class _BottomNav extends StatelessWidget {
                     (item) => Expanded(
                       child: _NavItem(
                         item: item,
-                        active: item.$1 == section,
+                        active: item.$1 == currentRoute,
                         onTap: onSelected,
                         desktop: false,
                       ),
@@ -365,9 +289,9 @@ class _NavItem extends StatelessWidget {
     required this.desktop,
   });
 
-  final (AppSection, IconData, String) item;
+  final (String, IconData, String) item;
   final bool active;
-  final ValueChanged<AppSection> onTap;
+  final ValueChanged<String> onTap;
   final bool desktop;
 
   @override

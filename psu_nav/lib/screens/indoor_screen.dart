@@ -1,14 +1,21 @@
-part of '../main.dart';
+import 'package:flutter/material.dart';
 
-class _IndoorScreen extends StatelessWidget {
-  const _IndoorScreen({
+import '../app/app_colors.dart';
+import '../routes/app_routes.dart';
+import '../widgets/search_row.dart';
+import '../widgets/soft_pill.dart';
+import '../widgets/tabs.dart';
+
+class IndoorScreen extends StatelessWidget {
+  const IndoorScreen({
+    super.key,
     required this.desktop,
-    required this.onSectionSelected,
+    required this.onSectionChanged,
     required this.onToast,
   });
 
   final bool desktop;
-  final ValueChanged<AppSection> onSectionSelected;
+  final void Function(String route) onSectionChanged;
   final ValueChanged<String> onToast;
 
   @override
@@ -18,7 +25,7 @@ class _IndoorScreen extends StatelessWidget {
         SearchRow(
           value: 'ENG-301 ห้องบรรยายรวม',
           leading: Icons.arrow_back,
-          onLeading: () => onSectionSelected(AppSection.map),
+          onLeading: () => onSectionChanged(AppRoutes.map),
         ),
         Tabs(
           labels: const ['ชั้น 1', 'ชั้น 2', 'ชั้น 3', 'ชั้น 4', 'ชั้น 5'],

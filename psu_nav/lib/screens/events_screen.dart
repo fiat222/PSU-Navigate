@@ -1,7 +1,13 @@
-part of '../main.dart';
+import 'package:flutter/material.dart';
 
-class _EventsScreen extends StatelessWidget {
-  const _EventsScreen({required this.desktop, required this.onToast});
+import '../widgets/info_card.dart';
+import '../widgets/responsive_list.dart';
+import '../widgets/right_pill.dart';
+import '../widgets/small_primary_button.dart';
+import '../widgets/tabs.dart';
+
+class EventsScreen extends StatelessWidget {
+  const EventsScreen({super.key, required this.desktop, required this.onToast});
 
   final bool desktop;
   final ValueChanged<String> onToast;

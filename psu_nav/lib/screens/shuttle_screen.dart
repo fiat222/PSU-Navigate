@@ -1,7 +1,14 @@
-part of '../main.dart';
+import 'package:flutter/material.dart';
 
-class _ShuttleScreen extends StatelessWidget {
-  const _ShuttleScreen({required this.desktop, required this.onToast});
+import '../app/app_colors.dart';
+import '../widgets/info_card.dart';
+import '../widgets/responsive_list.dart';
+import '../widgets/right_pill.dart';
+import '../widgets/small_primary_button.dart';
+import '../widgets/tabs.dart';
+
+class ShuttleScreen extends StatelessWidget {
+  const ShuttleScreen({super.key, required this.desktop, required this.onToast});
 
   final bool desktop;
   final ValueChanged<String> onToast;
