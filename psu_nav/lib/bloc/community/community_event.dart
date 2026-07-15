@@ -21,6 +21,14 @@ class ChangeSegment extends CommunityEvent {
   List<Object?> get props => [index];
 }
 
+class ChangeDetailSegment extends CommunityEvent {
+  const ChangeDetailSegment(this.index);
+  final int index;
+
+  @override
+  List<Object?> get props => [index];
+}
+
 class SearchPlaces extends CommunityEvent {
   const SearchPlaces(this.query);
   final String query;
@@ -38,11 +46,11 @@ class ChangeCategoryFilter extends CommunityEvent {
 }
 
 class SelectPlace extends CommunityEvent {
-  const SelectPlace(this.index);
-  final int index;
+  const SelectPlace(this.placeId);
+  final String placeId;
 
   @override
-  List<Object?> get props => [index];
+  List<Object?> get props => [placeId];
 }
 
 class DeselectPlace extends CommunityEvent {
@@ -59,4 +67,8 @@ class PostComment extends CommunityEvent {
 
 class ToastShown extends CommunityEvent {
   const ToastShown();
+}
+
+class ClearCommunityError extends CommunityEvent {
+  const ClearCommunityError();
 }

@@ -6,9 +6,10 @@ class CommunityState extends Equatable {
   const CommunityState({
     this.allPlaces = const [],
     this.places = const [],
-    this.selectedIndex,
+    this.selectedPlaceId,
     this.toastMessage,
     this.segmentIndex = 0,
+    this.detailSegmentIndex = 0,
     this.query = '',
     this.categoryFilter,
     this.loading = false,
@@ -19,9 +20,10 @@ class CommunityState extends Equatable {
 
   final List<PlaceDiscussion> allPlaces;
   final List<PlaceDiscussion> places;
-  final int? selectedIndex;
+  final String? selectedPlaceId;
   final String? toastMessage;
   final int segmentIndex;
+  final int detailSegmentIndex;
   final String query;
   final PlaceCategory? categoryFilter;
   final bool loading;
@@ -30,9 +32,12 @@ class CommunityState extends Equatable {
   final String? errorMessage;
 
   PlaceDiscussion? get selectedPlace {
-    final i = selectedIndex;
-    if (i == null || i < 0 || i >= places.length) return null;
-    return places[i];
+    final id = selectedPlaceId;
+    if (id == null) return null;
+    for (final place in allPlaces) {
+      if (place.id == id) return place;
+    }
+    return null;
   }
 
   bool get isEmptyAfterLoad => !loading && allPlaces.isEmpty;
@@ -40,9 +45,10 @@ class CommunityState extends Equatable {
   CommunityState copyWith({
     List<PlaceDiscussion>? allPlaces,
     List<PlaceDiscussion>? places,
-    int? selectedIndex,
+    String? selectedPlaceId,
     String? toastMessage,
     int? segmentIndex,
+    int? detailSegmentIndex,
     String? query,
     PlaceCategory? categoryFilter,
     bool clearCategory = false,
@@ -51,15 +57,20 @@ class CommunityState extends Equatable {
     bool? refreshing,
     String? errorMessage,
     bool clearSelected = false,
+    bool clearError = false,
+    bool clearToast = false,
   }) {
     return CommunityState(
       allPlaces: allPlaces ?? this.allPlaces,
       places: places ?? this.places,
-      selectedIndex: clearSelected
+      selectedPlaceId: clearSelected
           ? null
-          : (selectedIndex ?? this.selectedIndex),
-      toastMessage: toastMessage,
+          : (selectedPlaceId ?? this.selectedPlaceId),
+      toastMessage: clearToast
+          ? null
+          : (toastMessage ?? this.toastMessage),
       segmentIndex: segmentIndex ?? this.segmentIndex,
+      detailSegmentIndex: detailSegmentIndex ?? this.detailSegmentIndex,
       query: query ?? this.query,
       categoryFilter: clearCategory
           ? null
@@ -67,7 +78,9 @@ class CommunityState extends Equatable {
       loading: loading ?? this.loading,
       posting: posting ?? this.posting,
       refreshing: refreshing ?? this.refreshing,
-      errorMessage: errorMessage,
+      errorMessage: clearError
+          ? null
+          : (errorMessage ?? this.errorMessage),
     );
   }
 
@@ -75,9 +88,10 @@ class CommunityState extends Equatable {
   List<Object?> get props => [
     allPlaces,
     places,
-    selectedIndex,
+    selectedPlaceId,
     toastMessage,
     segmentIndex,
+    detailSegmentIndex,
     query,
     categoryFilter,
     loading,

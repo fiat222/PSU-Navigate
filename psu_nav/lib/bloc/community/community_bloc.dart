@@ -13,6 +13,10 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       emit(state.copyWith(segmentIndex: e.index));
       _emitFiltered(emit);
     });
+    on<ChangeDetailSegment>((e, emit) {
+      if (e.index < 0 || e.index > 2) return;
+      emit(state.copyWith(detailSegmentIndex: e.index));
+    });
     on<SearchPlaces>((e, emit) {
       emit(state.copyWith(query: e.query));
       _emitFiltered(emit);
@@ -32,29 +36,37 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     });
     on<PostComment>(_onPost);
     on<ToastShown>((e, emit) {
-      emit(state.copyWith(toastMessage: null));
+      emit(state.copyWith(clearToast: true));
+    });
+    on<ClearCommunityError>((e, emit) {
+      emit(state.copyWith(clearError: true));
     });
   }
 
   final PlaceRepository repo;
 
   Future<void> _onLoad(LoadPlaces e, Emitter<CommunityState> emit) async {
-    emit(state.copyWith(loading: true, errorMessage: null));
+    emit(state.copyWith(loading: true, clearError: true));
     try {
       final all = await repo.fetchPlaces();
       emit(state.copyWith(loading: false, allPlaces: all));
       _emitFiltered(emit);
     } catch (err) {
-      emit(state.copyWith(loading: false, errorMessage: err.toString()));
+      emit(
+        state.copyWith(
+          loading: false,
+          errorMessage: 'ไม่สามารถโหลดรีวิวได้',
+        ),
+      );
     }
   }
 
   void _onSelectPlace(SelectPlace e, Emitter<CommunityState> emit) {
-    if (e.index < 0 || e.index >= state.places.length) return;
-    final place = state.places[e.index];
+    final place = state.allPlaces.where((p) => p.id == e.placeId).firstOrNull;
+    if (place == null) return;
     emit(
       state.copyWith(
-        selectedIndex: e.index,
+        selectedPlaceId: place.id,
         toastMessage: 'เข้าสู่สถานที่: ${place.name}',
       ),
     );
@@ -73,7 +85,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       return;
     }
 
-    emit(state.copyWith(posting: true));
+    emit(state.copyWith(posting: true, clearError: true));
     try {
       final updated = await repo.postComment(placeId: selected.id, text: text);
       final newAll = state.allPlaces
@@ -88,7 +100,12 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       );
       _emitFiltered(emit);
     } catch (err) {
-      emit(state.copyWith(posting: false, errorMessage: err.toString()));
+      emit(
+        state.copyWith(
+          posting: false,
+          errorMessage: 'ส่งคอมเมนต์ไม่สำเร็จ กรุณาลองใหม่',
+        ),
+      );
     }
   }
 

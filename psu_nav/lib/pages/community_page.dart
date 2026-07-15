@@ -8,6 +8,7 @@ import '../bloc/community/community_event.dart';
 import '../bloc/community/community_state.dart';
 import '../data/repositories/place_repository.dart';
 import '../models/place_discussion.dart';
+import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_indicator.dart';
 import '../widgets/common/responsive_list.dart';
 import '../widgets/common/skeleton.dart';
@@ -63,17 +64,36 @@ class _CommunityBodyState extends State<_CommunityBody> {
   Widget build(BuildContext context) {
     return BlocListener<CommunityBloc, CommunityState>(
       listenWhen: (prev, curr) =>
-          curr.toastMessage != null && curr.toastMessage != prev.toastMessage,
+          (curr.toastMessage != null &&
+              curr.toastMessage != prev.toastMessage) ||
+          (curr.errorMessage != null &&
+              curr.errorMessage != prev.errorMessage &&
+              curr.allPlaces.isNotEmpty),
       listener: (context, state) {
         if (state.toastMessage != null) {
+          if (state.toastMessage == 'ส่งคอมเมนต์สำเร็จ') {
+            _controller.clear();
+          }
           widget.onToast(state.toastMessage!);
           context.read<CommunityBloc>().add(const ToastShown());
+        }
+        if (state.errorMessage != null && state.allPlaces.isNotEmpty) {
+          widget.onToast(state.errorMessage!);
+          context.read<CommunityBloc>().add(const ClearCommunityError());
         }
       },
       child: BlocBuilder<CommunityBloc, CommunityState>(
         builder: (context, state) {
           if (state.loading) {
             return const FullScreenLoading(label: 'กำลังโหลดรีวิวล่าสุด...');
+          }
+
+          if (state.errorMessage != null && state.allPlaces.isEmpty) {
+            return ErrorState(
+              message: state.errorMessage!,
+              onRetry: () =>
+                  context.read<CommunityBloc>().add(const LoadPlaces()),
+            );
           }
 
           if (state.isEmptyAfterLoad) {
@@ -99,6 +119,7 @@ class _CommunityBodyState extends State<_CommunityBody> {
             device: widget.device,
             controller: _controller,
             posting: state.posting,
+            detailSegmentIndex: state.detailSegmentIndex,
             onToast: widget.onToast,
           );
         },
@@ -176,8 +197,9 @@ class _PlaceListView extends StatelessWidget {
                 for (var i = 0; i < state.places.length; i++)
                   PlaceDiscussionCard(
                     place: state.places[i],
-                    onTap: () =>
-                        context.read<CommunityBloc>().add(SelectPlace(i)),
+                    onTap: () => context.read<CommunityBloc>().add(
+                      SelectPlace(state.places[i].id),
+                    ),
                   ),
                 const ModerationCard(),
               ],
@@ -194,6 +216,7 @@ class _PlaceDetailView extends StatelessWidget {
     required this.device,
     required this.controller,
     required this.posting,
+    required this.detailSegmentIndex,
     required this.onToast,
   });
 
@@ -201,11 +224,11 @@ class _PlaceDetailView extends StatelessWidget {
   final DeviceType device;
   final TextEditingController controller;
   final bool posting;
+  final int detailSegmentIndex;
   final ValueChanged<String> onToast;
 
   void _post(BuildContext context) {
     context.read<CommunityBloc>().add(PostComment(controller.text));
-    controller.clear();
   }
 
   @override
@@ -224,10 +247,13 @@ class _PlaceDetailView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Segmented(
-                  labels: ['ล่าสุด', 'ยอดนิยม', 'รูปภาพ'],
-                  selected: 0,
+                  labels: const ['ล่าสุด', 'ยอดนิยม', 'รูปภาพ'],
+                  selected: detailSegmentIndex,
+                  onChanged: (index) => context.read<CommunityBloc>().add(
+                    ChangeDetailSegment(index),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
