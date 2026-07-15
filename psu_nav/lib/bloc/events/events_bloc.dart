@@ -110,6 +110,10 @@ class ToastShown extends EventsEvent {
   const ToastShown();
 }
 
+class ClearEventsError extends EventsEvent {
+  const ClearEventsError();
+}
+
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
   EventsBloc({required this.repo}) : super(const EventsState(loading: true)) {
     on<LoadEvents>(_onLoad);
@@ -126,6 +130,9 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<ToastShown>((e, emit) {
       emit(state.copyWith(toastMessage: null));
     });
+    on<ClearEventsError>((e, emit) {
+      emit(state.copyWith(errorMessage: null));
+    });
   }
 
   final EventRepository repo;
@@ -137,7 +144,12 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       emit(state.copyWith(loading: false, allEvents: all));
       _emitFiltered(emit);
     } catch (err) {
-      emit(state.copyWith(loading: false, errorMessage: err.toString()));
+      emit(
+        state.copyWith(
+          loading: false,
+          errorMessage: 'ไม่สามารถโหลดกิจกรรมได้',
+        ),
+      );
     }
   }
 
@@ -148,7 +160,12 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       final result = await repo.randomMatch();
       emit(state.copyWith(matching: false, toastMessage: result.message));
     } catch (err) {
-      emit(state.copyWith(matching: false, errorMessage: err.toString()));
+      emit(
+        state.copyWith(
+          matching: false,
+          errorMessage: 'จับคู่ไม่สำเร็จ กรุณาลองใหม่',
+        ),
+      );
     }
   }
 
@@ -164,7 +181,12 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       _emitFiltered(emit);
       emit(state.copyWith(toastMessage: result.message));
     } catch (err) {
-      emit(state.copyWith(joining: false, errorMessage: err.toString()));
+      emit(
+        state.copyWith(
+          joining: false,
+          errorMessage: 'เข้าร่วมกิจกรรมไม่สำเร็จ กรุณาลองใหม่',
+        ),
+      );
     }
   }
 

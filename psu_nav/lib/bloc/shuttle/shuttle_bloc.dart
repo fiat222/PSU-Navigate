@@ -13,6 +13,7 @@ class ShuttleState extends Equatable {
     this.loading = true,
     this.notifiedStops = const {},
     this.toastMessage,
+    this.errorMessage,
   });
 
   final List<ShuttleRoute> allRoutes;
@@ -22,6 +23,7 @@ class ShuttleState extends Equatable {
   final bool loading;
   final Set<String> notifiedStops;
   final String? toastMessage;
+  final String? errorMessage;
 
   ShuttleRoute? get currentRoute {
     if (routes.isEmpty) return null;
@@ -37,6 +39,7 @@ class ShuttleState extends Equatable {
     bool? loading,
     Set<String>? notifiedStops,
     String? toastMessage,
+    String? errorMessage,
   }) {
     return ShuttleState(
       allRoutes: allRoutes ?? this.allRoutes,
@@ -46,6 +49,7 @@ class ShuttleState extends Equatable {
       loading: loading ?? this.loading,
       notifiedStops: notifiedStops ?? this.notifiedStops,
       toastMessage: toastMessage,
+      errorMessage: errorMessage,
     );
   }
 
@@ -58,6 +62,7 @@ class ShuttleState extends Equatable {
     loading,
     notifiedStops,
     toastMessage,
+    errorMessage,
   ];
 }
 
@@ -123,7 +128,7 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
   final ShuttleRepository repo;
 
   Future<void> _onLoad(LoadShuttle e, Emitter<ShuttleState> emit) async {
-    emit(state.copyWith(loading: true));
+    emit(state.copyWith(loading: true, errorMessage: null));
     try {
       final routes = await repo.fetchRoutes();
       final saved = await repo.fetchSavedStops();
@@ -136,7 +141,12 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
         ),
       );
     } catch (err) {
-      emit(state.copyWith(loading: false));
+      emit(
+        state.copyWith(
+          loading: false,
+          errorMessage: 'ไม่สามารถโหลดข้อมูลรถรับส่งได้',
+        ),
+      );
     }
   }
 }

@@ -6,6 +6,7 @@ import '../app/app_theme.dart';
 import '../bloc/events/events_bloc.dart';
 import '../data/repositories/event_repository.dart';
 import '../models/event_item.dart';
+import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_indicator.dart';
 import '../widgets/common/responsive_list.dart';
 import '../widgets/common/skeleton.dart';
@@ -42,11 +43,18 @@ class _EventsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<EventsBloc, EventsState>(
       listenWhen: (p, c) =>
-          c.toastMessage != null && c.toastMessage != p.toastMessage,
+          (c.toastMessage != null && c.toastMessage != p.toastMessage) ||
+          (c.errorMessage != null &&
+              c.errorMessage != p.errorMessage &&
+              c.allEvents.isNotEmpty),
       listener: (context, state) {
         if (state.toastMessage != null) {
           onToast(state.toastMessage!);
           context.read<EventsBloc>().add(const ToastShown());
+        }
+        if (state.errorMessage != null && state.allEvents.isNotEmpty) {
+          onToast(state.errorMessage!);
+          context.read<EventsBloc>().add(const ClearEventsError());
         }
       },
       child: BlocBuilder<EventsBloc, EventsState>(
@@ -84,6 +92,12 @@ class _EventsBody extends StatelessWidget {
   Widget _buildBody(BuildContext context, EventsState state) {
     if (state.loading) {
       return const FullScreenLoading(label: 'กำลังโหลดกิจกรรม...');
+    }
+    if (state.errorMessage != null && state.allEvents.isEmpty) {
+      return ErrorState(
+        message: state.errorMessage!,
+        onRetry: () => context.read<EventsBloc>().add(const LoadEvents()),
+      );
     }
     if (state.matching) {
       return const FullScreenLoading(

@@ -6,6 +6,7 @@ import '../app/app_theme.dart';
 import '../bloc/shuttle/shuttle_bloc.dart';
 import '../data/repositories/shuttle_repository.dart';
 import '../models/shuttle_route.dart';
+import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_indicator.dart';
 import '../widgets/common/responsive_list.dart';
 import '../widgets/info_card.dart';
@@ -76,6 +77,12 @@ class _ShuttleBody extends StatelessWidget {
   Widget _buildBody(BuildContext context, ShuttleState state) {
     if (state.loading && state.routes.isEmpty) {
       return const FullScreenLoading(label: 'กำลังโหลดตารางรถ...');
+    }
+    if (state.errorMessage != null && state.routes.isEmpty) {
+      return ErrorState(
+        message: state.errorMessage!,
+        onRetry: () => context.read<ShuttleBloc>().add(const LoadShuttle()),
+      );
     }
     final route = state.currentRoute;
     if (route == null) {
