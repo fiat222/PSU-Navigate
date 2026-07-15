@@ -125,9 +125,7 @@ class _EditProfileFormState extends State<EditProfileForm> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          AppLayout.radiusMd,
-                        ),
+                        borderRadius: BorderRadius.circular(AppLayout.radiusMd),
                       ),
                       side: const BorderSide(color: AppColors.line),
                     ),

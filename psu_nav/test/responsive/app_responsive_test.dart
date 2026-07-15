@@ -19,9 +19,7 @@ void main() {
         tester.platformDispatcher.textScaleFactorTestValue = 1.5;
         addTearDown(tester.view.resetDevicePixelRatio);
         addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(
-          tester.platformDispatcher.clearTextScaleFactorTestValue,
-        );
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
         await tester.pumpWidget(const PsuNavigatorApp());
         await tester.pump();

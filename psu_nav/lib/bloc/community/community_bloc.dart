@@ -53,10 +53,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       _emitFiltered(emit);
     } catch (err) {
       emit(
-        state.copyWith(
-          loading: false,
-          errorMessage: 'ไม่สามารถโหลดรีวิวได้',
-        ),
+        state.copyWith(loading: false, errorMessage: 'ไม่สามารถโหลดรีวิวได้'),
       );
     }
   }

@@ -21,8 +21,15 @@ class IndoorRoom extends Equatable {
   final int floor;
 
   @override
-  List<Object?> get props =>
-      [code, title, seats, facilities, openHours, rating, floor];
+  List<Object?> get props => [
+    code,
+    title,
+    seats,
+    facilities,
+    openHours,
+    rating,
+    floor,
+  ];
 }
 
 const List<IndoorRoom> kIndoorRooms = [
@@ -83,10 +90,7 @@ const List<IndoorRoom> kIndoorRooms = [
 ];
 
 class IndoorState extends Equatable {
-  const IndoorState({
-    this.floor = 3,
-    this.selectedCode = 'ENG-302',
-  });
+  const IndoorState({this.floor = 3, this.selectedCode = 'ENG-302'});
 
   final int floor;
   final String selectedCode;

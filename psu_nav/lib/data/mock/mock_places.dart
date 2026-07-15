@@ -4,7 +4,7 @@ import '../../models/comment_item.dart';
 import '../../models/place_discussion.dart';
 
 final List<CommentItem> _p1Comments = [
-  CommentItem(
+  const CommentItem(
     initials: 'ภต',
     name: 'ภูริต',
     time: '5 นาทีที่แล้ว',
@@ -17,66 +17,66 @@ final List<CommentItem> _p1Comments = [
         time: '2 นาทีที่แล้ว',
         text: 'จริงครับ วันนี้คนแน่นเป็นพิเศษ',
         likes: 3,
-        replies: const [],
+        replies: [],
       ),
     ],
   ),
-  CommentItem(
+  const CommentItem(
     initials: 'อม',
     name: 'อามีน',
     time: '1 ชั่วโมงที่แล้ว',
     text: 'ร้านน้ำปั่นเปิดแล้วนะทุกคนน',
     likes: 8,
-    replies: const [],
+    replies: [],
   ),
 ];
 
 final List<CommentItem> _p2Comments = [
-  CommentItem(
+  const CommentItem(
     initials: 'ปท',
     name: 'ปฐมพร',
     time: '30 นาทีที่แล้ว',
     text: 'โซนเงียบชั้น 3 แอร์เย็นมากครับ เตรียมเสื้อกันหนาวมาด้วย',
     likes: 24,
-    replies: const [],
+    replies: [],
   ),
-  CommentItem(
+  const CommentItem(
     initials: 'นภ',
     name: 'นภา',
     time: '2 ชั่วโมงที่แล้ว',
     text: 'ชั้น 1 ใกล้จะเต็มแล้ว แนะนำชั้น 4 ค่ะ',
     likes: 11,
-    replies: const [],
+    replies: [],
   ),
 ];
 
 final List<CommentItem> _p3Comments = [
-  CommentItem(
+  const CommentItem(
     initials: 'ธน',
     name: 'ธนพล',
     time: 'เมื่อวาน',
     text: 'มีดนตรีสดทุกศุกร์ บรรยากาศดีมาก',
     likes: 15,
-    replies: const [],
+    replies: [],
   ),
-  CommentItem(
+  const CommentItem(
     initials: 'ปน',
     name: 'ปนัดดา',
     time: '3 วันที่แล้ว',
     text: 'ช่วงเย็นๆ นั่งชิลได้สบายเลย',
     likes: 9,
-    replies: const [],
+    replies: [],
   ),
 ];
 
 final List<CommentItem> _p4Comments = [
-  CommentItem(
+  const CommentItem(
     initials: 'กฤ',
     name: 'กฤษณ์',
     time: '15 นาทีที่แล้ว',
     text: 'สนามหลังตึกวิศวกรรมคนเยอะช่วงเย็น เปิดถึง 21:00',
     likes: 7,
-    replies: const [],
+    replies: [],
   ),
 ];
 

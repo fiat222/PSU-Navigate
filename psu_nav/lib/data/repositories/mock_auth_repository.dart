@@ -9,8 +9,8 @@ class MockAuthRepository implements AuthRepository {
 
   UserProfile? _current;
   final Map<String, _StoredAccount> _accounts = {
-    'thanapon@email.psu.ac.th': _StoredAccount(
-      user: const UserProfile(
+    'thanapon@email.psu.ac.th': const _StoredAccount(
+      user: UserProfile(
         id: 'u-001',
         email: 'thanapon@email.psu.ac.th',
         fullName: 'ธนพล สันพิทักษ์',

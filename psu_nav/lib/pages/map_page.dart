@@ -56,7 +56,8 @@ class MapPage extends StatelessWidget {
                     color: AppColors.campus,
                     onTap: () => onSectionChanged(
                       AppRoutes.indoor,
-                      toast: 'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
+                      toast:
+                          'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
                     ),
                   ),
                   MapPin(

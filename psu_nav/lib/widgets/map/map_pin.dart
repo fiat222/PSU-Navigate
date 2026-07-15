@@ -58,7 +58,7 @@ class MapPin extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final pinSize = 34.0;
+        const pinSize = 34.0;
         final labelWidth = label.length * 7.0 + 14;
         final cx = constraints.maxWidth * leftPercent;
         final cy = constraints.maxHeight * topPercent;

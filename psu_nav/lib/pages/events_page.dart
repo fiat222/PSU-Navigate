@@ -216,9 +216,9 @@ class _JoiningBadge extends StatelessWidget {
         border: Border.all(color: AppColors.line),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           SizedBox(
             width: 12,
             height: 12,
@@ -251,8 +251,11 @@ class _RandomMatchBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.diversity_3_outlined,
-              color: AppColors.campus, size: 18),
+          const Icon(
+            Icons.diversity_3_outlined,
+            color: AppColors.campus,
+            size: 18,
+          ),
           const SizedBox(width: 10),
           const Expanded(
             child: Text(

@@ -4,23 +4,26 @@ import 'package:psu_nav/data/repositories/shuttle_repository.dart';
 import 'package:psu_nav/models/shuttle_route.dart';
 
 void main() {
-  test('ShuttleBloc exposes friendly errors and clears them on retry', () async {
-    final repo = _FakeShuttleRepository(routeFailures: 1);
-    final bloc = ShuttleBloc(repo: repo);
-    addTearDown(bloc.close);
+  test(
+    'ShuttleBloc exposes friendly errors and clears them on retry',
+    () async {
+      final repo = _FakeShuttleRepository(routeFailures: 1);
+      final bloc = ShuttleBloc(repo: repo);
+      addTearDown(bloc.close);
 
-    bloc.add(const LoadShuttle());
-    final failed = await bloc.stream.firstWhere(
-      (state) => !state.loading && state.errorMessage != null,
-    );
-    expect(failed.errorMessage, 'ไม่สามารถโหลดข้อมูลรถรับส่งได้');
+      bloc.add(const LoadShuttle());
+      final failed = await bloc.stream.firstWhere(
+        (state) => !state.loading && state.errorMessage != null,
+      );
+      expect(failed.errorMessage, 'ไม่สามารถโหลดข้อมูลรถรับส่งได้');
 
-    bloc.add(const LoadShuttle());
-    final loaded = await bloc.stream.firstWhere(
-      (state) => !state.loading && state.routes.isNotEmpty,
-    );
-    expect(loaded.errorMessage, isNull);
-  });
+      bloc.add(const LoadShuttle());
+      final loaded = await bloc.stream.firstWhere(
+        (state) => !state.loading && state.routes.isNotEmpty,
+      );
+      expect(loaded.errorMessage, isNull);
+    },
+  );
 }
 
 class _FakeShuttleRepository implements ShuttleRepository {

@@ -4,11 +4,7 @@ import '../../app/app_colors.dart';
 import '../../app/app_theme.dart';
 
 class ErrorState extends StatelessWidget {
-  const ErrorState({
-    super.key,
-    required this.message,
-    required this.onRetry,
-  });
+  const ErrorState({super.key, required this.message, required this.onRetry});
 
   final String message;
   final VoidCallback onRetry;
@@ -32,9 +28,7 @@ class ErrorState extends StatelessWidget {
                       height: 64,
                       decoration: BoxDecoration(
                         color: AppColors.softWarn,
-                        borderRadius: BorderRadius.circular(
-                          AppLayout.radiusLg,
-                        ),
+                        borderRadius: BorderRadius.circular(AppLayout.radiusLg),
                       ),
                       child: const Icon(
                         Icons.cloud_off_outlined,

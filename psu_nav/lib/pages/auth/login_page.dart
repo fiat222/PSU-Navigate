@@ -44,13 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.paper,
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listenWhen: (p, c) => c.errorMessage != p.errorMessage,
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            context.read<AuthBloc>().add(const AuthErrorShown());
-          }
-        },
+      body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return SafeArea(
             child: Center(

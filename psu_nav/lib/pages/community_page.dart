@@ -21,11 +21,7 @@ import '../widgets/segmented.dart';
 import '../widgets/status_chip.dart';
 
 class CommunityPage extends StatelessWidget {
-  const CommunityPage({
-    super.key,
-    required this.device,
-    required this.onToast,
-  });
+  const CommunityPage({super.key, required this.device, required this.onToast});
 
   final DeviceType device;
   final ValueChanged<String> onToast;

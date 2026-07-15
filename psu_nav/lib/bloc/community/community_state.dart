@@ -66,9 +66,7 @@ class CommunityState extends Equatable {
       selectedPlaceId: clearSelected
           ? null
           : (selectedPlaceId ?? this.selectedPlaceId),
-      toastMessage: clearToast
-          ? null
-          : (toastMessage ?? this.toastMessage),
+      toastMessage: clearToast ? null : (toastMessage ?? this.toastMessage),
       segmentIndex: segmentIndex ?? this.segmentIndex,
       detailSegmentIndex: detailSegmentIndex ?? this.detailSegmentIndex,
       query: query ?? this.query,
@@ -78,9 +76,7 @@ class CommunityState extends Equatable {
       loading: loading ?? this.loading,
       posting: posting ?? this.posting,
       refreshing: refreshing ?? this.refreshing,
-      errorMessage: clearError
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 

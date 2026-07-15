@@ -49,12 +49,12 @@ class ProfilePage extends StatelessWidget {
                       icon: const Icon(Icons.settings_outlined, size: 18),
                     ),
                   ),
-                  InfoCard(
+                  const InfoCard(
                     icon: Icons.cloud_done_outlined,
                     title: 'Offline cache',
                     subtitle:
                         'ตารางรถ, floor plan, place summary และรีวิวล่าสุดถูก cache ในเครื่อง',
-                    trailing: const RightPill('ready'),
+                    trailing: RightPill('ready'),
                   ),
                   const InfoCard(
                     icon: Icons.lock_outline,

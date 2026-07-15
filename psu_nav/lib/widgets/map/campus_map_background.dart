@@ -7,9 +7,9 @@ class CampusMapBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: const CampusMapPainter(),
-      child: const SizedBox.expand(),
+    return const CustomPaint(
+      painter: CampusMapPainter(),
+      child: SizedBox.expand(),
     );
   }
 }

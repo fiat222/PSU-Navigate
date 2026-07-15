@@ -145,10 +145,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       _emitFiltered(emit);
     } catch (err) {
       emit(
-        state.copyWith(
-          loading: false,
-          errorMessage: 'ไม่สามารถโหลดกิจกรรมได้',
-        ),
+        state.copyWith(loading: false, errorMessage: 'ไม่สามารถโหลดกิจกรรมได้'),
       );
     }
   }

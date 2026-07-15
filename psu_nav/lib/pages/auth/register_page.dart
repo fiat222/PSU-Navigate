@@ -78,13 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         centerTitle: true,
       ),
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listenWhen: (p, c) => c.errorMessage != p.errorMessage,
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            context.read<AuthBloc>().add(const AuthErrorShown());
-          }
-        },
+      body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return SafeArea(
             child: Center(
@@ -265,4 +259,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 }
-

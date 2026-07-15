@@ -83,8 +83,7 @@ class RoomBox extends StatelessWidget {
                         style: TextStyle(
                           color: hot ? AppColors.campus : AppColors.muted,
                           fontSize: 11,
-                          fontWeight:
-                              hot ? FontWeight.w900 : FontWeight.w500,
+                          fontWeight: hot ? FontWeight.w900 : FontWeight.w500,
                         ),
                       ),
                     ),
