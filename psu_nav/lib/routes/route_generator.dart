@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/app_colors.dart';
+import '../app/app_theme.dart';
 import '../screens/community_screen.dart';
 import '../screens/events_screen.dart';
 import '../screens/indoor_screen.dart';
@@ -12,33 +13,33 @@ import 'app_routes.dart';
 class RouteGenerator {
   static Widget screenFor(
     String route, {
-    required bool desktop,
+    required DeviceType device,
     required void Function(String route) onSectionChanged,
     required ValueChanged<String> onToast,
   }) {
     switch (route) {
       case AppRoutes.map:
         return MapScreen(
-          desktop: desktop,
+          device: device,
           onSectionChanged: onSectionChanged,
           onToast: onToast,
         );
       case AppRoutes.indoor:
         return IndoorScreen(
-          desktop: desktop,
+          device: device,
           onSectionChanged: onSectionChanged,
           onToast: onToast,
         );
       case AppRoutes.shuttle:
-        return ShuttleScreen(desktop: desktop, onToast: onToast);
+        return ShuttleScreen(device: device, onToast: onToast);
       case AppRoutes.events:
-        return EventsScreen(desktop: desktop, onToast: onToast);
+        return EventsScreen(device: device, onToast: onToast);
       case AppRoutes.community:
-        return CommunityScreen(desktop: desktop, onToast: onToast);
+        return CommunityScreen(device: device, onToast: onToast);
       case AppRoutes.profile:
-        return ProfileScreen(desktop: desktop, onToast: onToast);
+        return ProfileScreen(device: device, onToast: onToast);
       default:
-        return _UnknownScreen(route: route);
+        return UnknownScreen(route: route);
     }
   }
 
@@ -62,8 +63,8 @@ class RouteGenerator {
   }
 }
 
-class _UnknownScreen extends StatelessWidget {
-  const _UnknownScreen({required this.route});
+class UnknownScreen extends StatelessWidget {
+  const UnknownScreen({super.key, required this.route});
 
   final String route;
 
@@ -75,9 +76,9 @@ class _UnknownScreen extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.alert),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Route not found',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../app/app_colors.dart';
+import '../app/app_theme.dart';
 import '../routes/app_routes.dart';
+import '../widgets/indoor/floor_plan.dart';
 import '../widgets/search_row.dart';
 import '../widgets/soft_pill.dart';
 import '../widgets/tabs.dart';
@@ -9,17 +11,19 @@ import '../widgets/tabs.dart';
 class IndoorScreen extends StatelessWidget {
   const IndoorScreen({
     super.key,
-    required this.desktop,
+    required this.device,
     required this.onSectionChanged,
     required this.onToast,
   });
 
-  final bool desktop;
+  final DeviceType device;
   final void Function(String route) onSectionChanged;
   final ValueChanged<String> onToast;
 
   @override
   Widget build(BuildContext context) {
+    final horizontal = device == DeviceType.phone ? 16.0 : 22.0;
+
     return Column(
       children: [
         SearchRow(
@@ -27,69 +31,64 @@ class IndoorScreen extends StatelessWidget {
           leading: Icons.arrow_back,
           onLeading: () => onSectionChanged(AppRoutes.map),
         ),
-        Tabs(
-          labels: const ['ชั้น 1', 'ชั้น 2', 'ชั้น 3', 'ชั้น 4', 'ชั้น 5'],
+        const Tabs(
+          labels: ['ชั้น 1', 'ชั้น 2', 'ชั้น 3', 'ชั้น 4', 'ชั้น 5'],
           selected: 2,
         ),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              desktop ? 22 : 16,
-              0,
-              desktop ? 22 : 16,
-              12,
-            ),
+            padding: EdgeInsets.fromLTRB(horizontal, 0, horizontal, 12),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: AppColors.line),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Stack(
-                children: const [
-                  _FloorPlanBase(),
-                  _RoomBox(
+              child: const Stack(
+                children: [
+                  FloorPlanBackground(),
+                  RoomBox(
                     label: 'ENG-301',
-                    left: 34,
-                    top: 34,
-                    width: 84,
-                    height: 50,
+                    leftPercent: 0.10,
+                    topPercent: 0.12,
+                    widthPercent: 0.24,
+                    heightPercent: 0.18,
                   ),
-                  _RoomBox(
+                  RoomBox(
                     label: 'ENG-302',
-                    left: 132,
-                    top: 34,
-                    width: 112,
-                    height: 50,
+                    leftPercent: 0.38,
+                    topPercent: 0.12,
+                    widthPercent: 0.32,
+                    heightPercent: 0.18,
                     hot: true,
                   ),
-                  _RoomBox(
+                  RoomBox(
                     label: 'Lab',
-                    left: 258,
-                    top: 34,
-                    width: 72,
-                    height: 50,
+                    leftPercent: 0.74,
+                    topPercent: 0.12,
+                    widthPercent: 0.20,
+                    heightPercent: 0.18,
                   ),
-                  _RoomBox(
+                  RoomBox(
                     label: 'Toilet',
-                    left: 34,
-                    top: 178,
-                    width: 96,
-                    height: 56,
+                    leftPercent: 0.10,
+                    topPercent: 0.62,
+                    widthPercent: 0.27,
+                    heightPercent: 0.20,
                   ),
-                  _RoomBox(
+                  RoomBox(
                     label: 'Lift',
-                    left: 144,
-                    top: 178,
-                    width: 96,
-                    height: 56,
+                    leftPercent: 0.42,
+                    topPercent: 0.62,
+                    widthPercent: 0.27,
+                    heightPercent: 0.20,
                   ),
-                  _RoomBox(
+                  RoomBox(
                     label: 'Stair',
-                    left: 254,
-                    top: 178,
-                    width: 76,
-                    height: 56,
+                    leftPercent: 0.74,
+                    topPercent: 0.62,
+                    widthPercent: 0.20,
+                    heightPercent: 0.20,
                   ),
                 ],
               ),
@@ -125,103 +124,6 @@ class IndoorScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _FloorPlanBase extends StatelessWidget {
-  const _FloorPlanBase();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(child: CustomPaint(painter: _FloorPlanPainter()));
-  }
-}
-
-class _FloorPlanPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFFEDF3FB)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 18;
-    final rect = Rect.fromLTWH(28, 88, size.width - 56, 70);
-    canvas.drawRect(rect, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-class _RoomBox extends StatelessWidget {
-  const _RoomBox({
-    required this.label,
-    required this.left,
-    required this.top,
-    required this.width,
-    required this.height,
-    this.hot = false,
-  });
-
-  final String label;
-  final double left;
-  final double top;
-  final double width;
-  final double height;
-  final bool hot;
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: left,
-      top: top,
-      width: width,
-      height: height,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: hot ? const Color(0xFFEAF2FF) : const Color(0xFFFBFDFF),
-                border: Border.all(
-                  color: hot ? AppColors.campus : const Color(0xFFCBD7E6),
-                ),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: hot ? AppColors.campus : AppColors.muted,
-                    fontSize: 11,
-                    fontWeight: hot ? FontWeight.w900 : FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (hot)
-            Positioned(
-              top: -6,
-              right: -6,
-              child: Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: AppColors.alert,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.alert.withValues(alpha: .14),
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

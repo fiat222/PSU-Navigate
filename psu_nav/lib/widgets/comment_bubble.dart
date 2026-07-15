@@ -13,10 +13,7 @@ class CommentBubble extends StatelessWidget {
     this.actions = const [],
     this.boxed = true,
     this.avatarGap = 8,
-    this.metaStyle = const TextStyle(
-      fontWeight: FontWeight.w800,
-      fontSize: 11,
-    ),
+    this.metaStyle = const TextStyle(fontWeight: FontWeight.w800, fontSize: 11),
     this.textStyle = const TextStyle(
       color: AppColors.muted,
       fontSize: 11,
@@ -49,12 +46,7 @@ class CommentBubble extends StatelessWidget {
       children: [
         Text('$name · $time', style: metaStyle),
         const SizedBox(height: 4),
-        Text(
-          text,
-          maxLines: maxLines,
-          overflow: overflow,
-          style: textStyle,
-        ),
+        Text(text, maxLines: maxLines, overflow: overflow, style: textStyle),
         if (actions.isNotEmpty) ...[
           const SizedBox(height: 8),
           Wrap(spacing: actionSpacing, children: actions),

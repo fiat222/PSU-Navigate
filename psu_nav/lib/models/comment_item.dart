@@ -1,4 +1,6 @@
-class CommentItem {
+import 'package:equatable/equatable.dart';
+
+class CommentItem extends Equatable {
   const CommentItem({
     required this.initials,
     required this.name,
@@ -14,4 +16,7 @@ class CommentItem {
   final String time;
   final int likes;
   final List<CommentItem> replies;
+
+  @override
+  List<Object?> get props => [initials, name, text, time, likes, replies];
 }

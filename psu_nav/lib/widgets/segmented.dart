@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import '../app/app_colors.dart';
 
 class Segmented extends StatelessWidget {
-  const Segmented({super.key, required this.labels, required this.selected});
+  const Segmented({
+    super.key,
+    required this.labels,
+    required this.selected,
+    this.onChanged,
+  });
 
   final List<String> labels;
   final int selected;
+  final ValueChanged<int>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +27,21 @@ class Segmented extends StatelessWidget {
         children: [
           for (var i = 0; i < labels.length; i++)
             Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 9),
-                color: i == selected ? AppColors.campus : Colors.transparent,
-                alignment: Alignment.center,
-                child: Text(
-                  labels[i],
-                  style: TextStyle(
-                    color: i == selected ? Colors.white : AppColors.muted,
-                    fontSize: 12,
+              child: InkWell(
+                onTap: onChanged == null ? null : () => onChanged!(i),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  color: i == selected ? AppColors.campus : Colors.transparent,
+                  alignment: Alignment.center,
+                  child: Text(
+                    labels[i],
+                    style: TextStyle(
+                      color: i == selected ? Colors.white : AppColors.muted,
+                      fontSize: 12,
+                      fontWeight: i == selected
+                          ? FontWeight.w800
+                          : FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
