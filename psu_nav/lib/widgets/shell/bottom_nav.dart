@@ -29,7 +29,7 @@ class BottomNav extends StatelessWidget {
 
   final String currentRoute;
   final bool rail;
-  final ValueChanged<String> onSelected;
+  final SectionNavigator onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class _NavTile extends StatelessWidget {
 
   final NavItem item;
   final bool active;
-  final ValueChanged<String> onTap;
+  final SectionNavigator onTap;
   final bool rail;
 
   @override

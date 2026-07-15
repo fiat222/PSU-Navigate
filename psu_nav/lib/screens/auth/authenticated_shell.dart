@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../app/app_colors.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -23,15 +24,15 @@ class _AuthenticatedShellState extends State<AuthenticatedShell> {
         SnackBar(
           content: Text(message),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF102344),
+          backgroundColor: AppColors.toastBg,
           duration: const Duration(milliseconds: 1800),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       );
   }
 
-  void _onNavigate(String route) {
-    context.read<NavigationBloc>().add(NavigateTo(route));
+  void _onNavigate(String route, {String? toast}) {
+    context.read<NavigationBloc>().add(NavigateTo(route, toast: toast));
   }
 
   void _onToggleNotifications() {
@@ -53,6 +54,15 @@ class _AuthenticatedShellState extends State<AuthenticatedShell> {
             if (state.toastMessage != null) {
               _showToast(state.toastMessage!);
               context.read<AuthBloc>().add(const AuthToastShown());
+            }
+          },
+        ),
+        BlocListener<NavigationBloc, NavigationState>(
+          listenWhen: (p, c) => c.pendingToast != p.pendingToast,
+          listener: (context, state) {
+            if (state.pendingToast != null) {
+              _showToast(state.pendingToast!);
+              context.read<NavigationBloc>().add(const NavigationToastShown());
             }
           },
         ),

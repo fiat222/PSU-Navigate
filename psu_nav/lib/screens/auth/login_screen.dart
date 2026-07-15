@@ -6,6 +6,7 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../widgets/auth/auth_form_fields.dart';
+import '../../widgets/common/error_banner.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 24),
                           if (state.errorMessage != null)
-                            _ErrorBanner(message: state.errorMessage!),
+                            ErrorBanner(message: state.errorMessage!),
                           if (state.errorMessage != null)
                             const SizedBox(height: 12),
                           AuthTextField(
@@ -185,40 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  const _ErrorBanner({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.softWarn,
-        border: Border.all(color: AppColors.alert.withValues(alpha: .32)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.error_outline, color: AppColors.alert, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: AppColors.alert,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

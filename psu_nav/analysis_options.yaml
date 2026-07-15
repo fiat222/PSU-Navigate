@@ -6,3 +6,12 @@ analyzer:
 
 linter:
   rules:
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    require_trailing_commas: true
+    use_super_parameters: true
+    sort_child_properties_last: true
+    unnecessary_lambdas: true
+    avoid_print: true

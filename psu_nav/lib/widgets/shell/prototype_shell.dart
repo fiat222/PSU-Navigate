@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_colors.dart';
 import '../../app/app_theme.dart';
+import '../../routes/app_routes.dart';
 import '../../routes/route_generator.dart';
 import '../common/loading_indicator.dart';
 import 'bottom_nav.dart';
@@ -21,7 +22,7 @@ class PrototypeShell extends StatelessWidget {
 
   final String currentRoute;
   final DeviceType device;
-  final ValueChanged<String> onNavigate;
+  final SectionNavigator onNavigate;
   final ValueChanged<String> onToast;
   final bool isTransitioning;
   final bool notificationsEnabled;

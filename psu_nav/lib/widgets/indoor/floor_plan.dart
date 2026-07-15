@@ -40,6 +40,7 @@ class RoomBox extends StatelessWidget {
     required this.widthPercent,
     required this.heightPercent,
     this.hot = false,
+    this.onTap,
   });
 
   final String label;
@@ -48,6 +49,7 @@ class RoomBox extends StatelessWidget {
   final double widthPercent;
   final double heightPercent;
   final bool hot;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -64,21 +66,26 @@ class RoomBox extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: hot ? AppColors.roomHot : AppColors.softRoom,
-                    border: Border.all(
+                child: Material(
+                  color: hot ? AppColors.roomHot : AppColors.softRoom,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
                       color: hot ? AppColors.campus : AppColors.roomIdle,
                     ),
                     borderRadius: BorderRadius.circular(AppLayout.radiusSm),
                   ),
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        color: hot ? AppColors.campus : AppColors.muted,
-                        fontSize: 11,
-                        fontWeight: hot ? FontWeight.w900 : FontWeight.w500,
+                  child: InkWell(
+                    onTap: onTap,
+                    borderRadius: BorderRadius.circular(AppLayout.radiusSm),
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          color: hot ? AppColors.campus : AppColors.muted,
+                          fontSize: 11,
+                          fontWeight:
+                              hot ? FontWeight.w900 : FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

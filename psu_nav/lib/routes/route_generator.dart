@@ -14,7 +14,7 @@ class RouteGenerator {
   static Widget screenFor(
     String route, {
     required DeviceType device,
-    required void Function(String route) onSectionChanged,
+    required SectionNavigator onSectionChanged,
     required ValueChanged<String> onToast,
   }) {
     switch (route) {

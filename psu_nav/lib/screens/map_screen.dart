@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart' hide IconButton;
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../app/app_colors.dart';
 import '../app/app_theme.dart';
-import '../bloc/navigation/navigation_bloc.dart';
 import '../routes/app_routes.dart';
 import '../widgets/map/campus_map_background.dart';
 import '../widgets/map/map_pin.dart';
@@ -19,23 +17,8 @@ class MapScreen extends StatelessWidget {
   });
 
   final DeviceType device;
-  final void Function(String route) onSectionChanged;
+  final SectionNavigator onSectionChanged;
   final ValueChanged<String> onToast;
-
-  Future<void> _handleNavigate(BuildContext context) async {
-    final bloc = context.read<NavigationBloc>();
-    final messenger = ScaffoldMessenger.of(context);
-    bloc.add(const NavigateTo(AppRoutes.indoor));
-    Future<void>.delayed(const Duration(milliseconds: 600), () {
-      if (bloc.isClosed) return;
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text('เริ่ม route ไปอาคารวิศวกรรมศาสตร์ 1'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +54,10 @@ class MapScreen extends StatelessWidget {
                     icon: Icons.apartment,
                     label: 'วิศวกรรม 1',
                     color: AppColors.campus,
-                    onTap: () {
-                      onSectionChanged(AppRoutes.indoor);
-                      onToast(
-                        'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
-                      );
-                    },
+                    onTap: () => onSectionChanged(
+                      AppRoutes.indoor,
+                      toast: 'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
+                    ),
                   ),
                   MapPin(
                     leftPercent: .73,
@@ -98,10 +79,19 @@ class MapScreen extends StatelessWidget {
                     left: 12,
                     right: 12,
                     bottom: 12,
-                    child: PlaceCard(
-                      onIndoor: () => onSectionChanged(AppRoutes.indoor),
-                      onCommunity: () => onSectionChanged(AppRoutes.community),
-                      onNavigate: () => _handleNavigate(context),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.45,
+                      ),
+                      child: PlaceCard(
+                        onIndoor: () => onSectionChanged(AppRoutes.indoor),
+                        onCommunity: () =>
+                            onSectionChanged(AppRoutes.community),
+                        onNavigate: () => onSectionChanged(
+                          AppRoutes.indoor,
+                          toast: 'เริ่ม route ไปอาคารวิศวกรรมศาสตร์ 1',
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/app_colors.dart';
-import '../../app/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../models/place_discussion.dart';
 import '../../widgets/auth/auth_form_fields.dart';
+import '../../widgets/auth/faculty_picker.dart';
+import '../../widgets/common/error_banner.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _studentIdCtrl = TextEditingController();
   PlaceCategory? _faculty;
   bool _obscure = true;
+  String? _localError;
 
   @override
   void dispose() {
@@ -40,14 +42,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
     if (_faculty == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('กรุณาเลือกคณะ'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      setState(() => _localError = 'กรุณาเลือกคณะ');
       return;
     }
+    setState(() => _localError = null);
     context.read<AuthBloc>().add(
       RegisterRequested(
         email: _emailCtrl.text.trim(),
@@ -110,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (state.errorMessage != null) ...[
-                            _ErrorBanner(message: state.errorMessage!),
+                            ErrorBanner(message: state.errorMessage!),
                             const SizedBox(height: 12),
                           ],
                           AuthTextField(
@@ -142,11 +140,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           const SizedBox(height: 12),
-                          _FacultyPicker(
+                          FacultyPicker(
                             value: _faculty,
                             enabled: !state.submitting,
                             onChanged: (v) => setState(() => _faculty = v),
                           ),
+                          if (_localError != null) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              _localError!,
+                              style: const TextStyle(
+                                color: AppColors.alert,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 12),
                           AuthTextField(
                             label: 'PSU Email',
@@ -257,107 +266,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 }
 
-class _FacultyPicker extends StatelessWidget {
-  const _FacultyPicker({
-    required this.value,
-    required this.onChanged,
-    required this.enabled,
-  });
 
-  final PlaceCategory? value;
-  final ValueChanged<PlaceCategory?> onChanged;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'คณะ',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: AppColors.ink,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppLayout.radiusMd),
-            border: Border.all(
-              color: value == null ? AppColors.alert : AppColors.line,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<PlaceCategory>(
-              value: value,
-              isExpanded: true,
-              iconEnabledColor: AppColors.muted,
-              hint: const Text(
-                'เลือกคณะของคุณ',
-                style: TextStyle(color: AppColors.muted, fontSize: 13),
-              ),
-              items: [
-                for (final c in PlaceCategory.values)
-                  DropdownMenuItem(
-                    value: c,
-                    child: Row(
-                      children: [
-                        Icon(c.icon, size: 16, color: AppColors.campus),
-                        const SizedBox(width: 8),
-                        Text(
-                          c.label,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.ink,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-              onChanged: enabled ? onChanged : null,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  const _ErrorBanner({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.softWarn,
-        border: Border.all(color: AppColors.alert.withValues(alpha: .32)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.error_outline, color: AppColors.alert, size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              message,
-              style: const TextStyle(
-                color: AppColors.alert,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

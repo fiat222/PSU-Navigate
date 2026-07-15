@@ -68,6 +68,11 @@ class _EventsBody extends StatelessWidget {
                   ChangeTab(EventsTab.values[i]),
                 ),
               ),
+              if (state.tab == EventsTab.plan)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: _RandomMatchBanner(matching: state.matching),
+                ),
               Expanded(child: _buildBody(context, state)),
             ],
           );
@@ -210,6 +215,52 @@ class _JoiningBadge extends StatelessWidget {
             'กำลังส่งความสนใจ...',
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RandomMatchBanner extends StatelessWidget {
+  const _RandomMatchBanner({required this.matching});
+
+  final bool matching;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
+      decoration: BoxDecoration(
+        color: AppColors.softBlue,
+        border: Border.all(color: AppColors.campus.withValues(alpha: .3)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.diversity_3_outlined,
+              color: AppColors.campus, size: 18),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Text(
+              'สุ่มจับคู่ผู้ใช้ที่ online ใน campus ตอนนี้',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: AppColors.ink,
+              ),
+            ),
+          ),
+          if (matching)
+            const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else
+            SmallPrimaryButton(
+              'จับคู่เลย',
+              () => context.read<EventsBloc>().add(const RandomMatch()),
+            ),
         ],
       ),
     );

@@ -21,8 +21,10 @@ class PlaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Panel(
-      child: Column(
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
           const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -72,6 +74,7 @@ class PlaceCard extends StatelessWidget {
             ],
           ),
         ],
+        ),
       ),
     );
   }

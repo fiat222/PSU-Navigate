@@ -88,6 +88,7 @@ class _CommunityBodyState extends State<_CommunityBody> {
           if (place == null) {
             return _PlaceListView(
               state: state,
+              device: widget.device,
               controller: _controller,
               onToast: widget.onToast,
             );
@@ -109,11 +110,13 @@ class _CommunityBodyState extends State<_CommunityBody> {
 class _PlaceListView extends StatelessWidget {
   const _PlaceListView({
     required this.state,
+    required this.device,
     required this.controller,
     required this.onToast,
   });
 
   final CommunityState state;
+  final DeviceType device;
   final TextEditingController controller;
   final ValueChanged<String> onToast;
 
@@ -168,7 +171,7 @@ class _PlaceListView extends StatelessWidget {
         else
           Expanded(
             child: ResponsiveList(
-              device: DeviceType.phone,
+              device: device,
               children: [
                 for (var i = 0; i < state.places.length; i++)
                   PlaceDiscussionCard(

@@ -6,3 +6,5 @@ class AppRoutes {
   static const String community = '/community';
   static const String profile = '/profile';
 }
+
+typedef SectionNavigator = void Function(String route, {String? toast});

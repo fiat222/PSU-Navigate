@@ -63,17 +63,6 @@ class ProfileScreen extends StatelessWidget {
                         'JWT session · mock SSO สำหรับ demo · ไม่มีการเก็บ password จริง',
                     trailing: RightPill('student'),
                   ),
-                  InfoCard(
-                    icon: Icons.logout,
-                    title: 'ออกจากระบบ',
-                    subtitle: 'ลบ session ปัจจุบันและกลับไปหน้าเข้าสู่ระบบ',
-                    trailing: IconButton(
-                      onPressed: () {
-                        context.read<AuthBloc>().add(const LogoutRequested());
-                      },
-                      icon: const Icon(Icons.arrow_forward_outlined, size: 18),
-                    ),
-                  ),
                 ],
               ),
             ),
