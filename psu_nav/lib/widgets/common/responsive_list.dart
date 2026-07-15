@@ -27,17 +27,25 @@ class ResponsiveList extends StatelessWidget {
       );
     }
 
-    final crossAxisCount = device == DeviceType.desktop ? 3 : 2;
-    return GridView.builder(
-      padding: padding,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: device == DeviceType.desktop ? 1.65 : 2.2,
-      ),
-      itemBuilder: (context, index) => children[index],
-      itemCount: children.length,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 10.0;
+        final columns = device == DeviceType.desktop ? 3 : 2;
+        final availableWidth = constraints.maxWidth - padding.horizontal;
+        final itemWidth = (availableWidth - gap * (columns - 1)) / columns;
+
+        return SingleChildScrollView(
+          padding: padding,
+          child: Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: [
+              for (final child in children)
+                SizedBox(width: itemWidth, child: child),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -142,8 +142,9 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () => _submit(context),
                           ),
                           const SizedBox(height: 14),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               const Text(
                                 'ยังไม่มีบัญชี? ',

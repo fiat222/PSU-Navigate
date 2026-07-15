@@ -99,14 +99,18 @@ class _NavTile extends StatelessWidget {
       onTap: () => onTap(item.route),
       borderRadius: BorderRadius.circular(AppLayout.radiusMd),
       child: Container(
-        height: rail
-            ? AppLayout.navItemHeightDesktop
-            : AppLayout.navItemHeightMobile,
+        constraints: BoxConstraints(
+          minHeight: rail
+              ? AppLayout.navItemHeightDesktop
+              : AppLayout.navItemHeightMobile,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
           color: active ? AppColors.softBlue : Colors.transparent,
           borderRadius: BorderRadius.circular(AppLayout.radiusMd),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
