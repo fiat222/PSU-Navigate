@@ -10,14 +10,14 @@ import '../../widgets/auth/auth_form_fields.dart';
 import '../../widgets/auth/faculty_picker.dart';
 import '../../widgets/common/error_banner.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
@@ -265,5 +265,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-
 

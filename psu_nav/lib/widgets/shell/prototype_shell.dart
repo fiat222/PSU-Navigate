@@ -35,7 +35,7 @@ class PrototypeShell extends StatelessWidget {
     final screen = Stack(
       key: ValueKey(currentRoute),
       children: [
-        RouteGenerator.screenFor(
+        RouteGenerator.pageFor(
           currentRoute,
           device: device,
           onSectionChanged: onNavigate,

@@ -11,8 +11,8 @@ import '../widgets/common/responsive_list.dart';
 import '../widgets/info_card.dart';
 import '../widgets/right_pill.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key, required this.device, required this.onToast});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key, required this.device, required this.onToast});
 
   final DeviceType device;
   final ValueChanged<String> onToast;

@@ -9,8 +9,8 @@ import '../widgets/indoor/floor_plan.dart';
 import '../widgets/search_row.dart';
 import '../widgets/soft_pill.dart';
 
-class IndoorScreen extends StatelessWidget {
-  const IndoorScreen({
+class IndoorPage extends StatelessWidget {
+  const IndoorPage({
     super.key,
     required this.device,
     required this.onSectionChanged,

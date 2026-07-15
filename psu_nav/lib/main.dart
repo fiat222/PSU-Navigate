@@ -12,7 +12,7 @@ import 'data/repositories/mock_place_repository.dart';
 import 'data/repositories/mock_shuttle_repository.dart';
 import 'data/repositories/place_repository.dart';
 import 'data/repositories/shuttle_repository.dart';
-import 'screens/auth/auth_gate.dart';
+import 'pages/auth/auth_gate.dart';
 
 void main() {
   runApp(const PsuNavigatorApp());

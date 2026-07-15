@@ -7,16 +7,16 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../widgets/auth/auth_form_fields.dart';
 import '../../widgets/common/error_banner.dart';
-import 'register_screen.dart';
+import 'register_page.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController(text: 'thanapon@email.psu.ac.th');
   final _passwordCtrl = TextEditingController(text: 'psu1234');
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (_) =>
-                                                const RegisterScreen(),
+                                                const RegisterPage(),
                                           ),
                                         );
                                       },

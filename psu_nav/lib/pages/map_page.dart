@@ -8,8 +8,8 @@ import '../widgets/map/map_pin.dart';
 import '../widgets/map/place_card.dart';
 import '../widgets/search_row.dart';
 
-class MapScreen extends StatelessWidget {
-  const MapScreen({
+class MapPage extends StatelessWidget {
+  const MapPage({
     super.key,
     required this.device,
     required this.onSectionChanged,

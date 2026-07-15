@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
-import '../auth/login_screen.dart';
+import 'login_page.dart';
 import 'authenticated_shell.dart';
 
 class AuthGate extends StatelessWidget {
@@ -17,7 +17,7 @@ class AuthGate extends StatelessWidget {
         if (state.isAuthenticated) {
           return const AuthenticatedShell();
         }
-        return const LoginScreen();
+        return const LoginPage();
       },
     );
   }

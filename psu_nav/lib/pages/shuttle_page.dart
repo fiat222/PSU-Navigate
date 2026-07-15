@@ -13,8 +13,8 @@ import '../widgets/right_pill.dart';
 import '../widgets/small_primary_button.dart';
 import '../widgets/tabs.dart';
 
-class ShuttleScreen extends StatelessWidget {
-  const ShuttleScreen({super.key, required this.device, required this.onToast});
+class ShuttlePage extends StatelessWidget {
+  const ShuttlePage({super.key, required this.device, required this.onToast});
 
   final DeviceType device;
   final ValueChanged<String> onToast;

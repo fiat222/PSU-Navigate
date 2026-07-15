@@ -15,8 +15,8 @@ import '../widgets/right_pill.dart';
 import '../widgets/small_primary_button.dart';
 import '../widgets/tabs.dart';
 
-class EventsScreen extends StatelessWidget {
-  const EventsScreen({super.key, required this.device, required this.onToast});
+class EventsPage extends StatelessWidget {
+  const EventsPage({super.key, required this.device, required this.onToast});
 
   final DeviceType device;
   final ValueChanged<String> onToast;

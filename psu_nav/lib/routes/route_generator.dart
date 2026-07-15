@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../app/app_colors.dart';
 import '../app/app_theme.dart';
-import '../screens/community_screen.dart';
-import '../screens/events_screen.dart';
-import '../screens/indoor_screen.dart';
-import '../screens/map_screen.dart';
-import '../screens/profile_screen.dart';
-import '../screens/shuttle_screen.dart';
+import '../pages/community_page.dart';
+import '../pages/events_page.dart';
+import '../pages/indoor_page.dart';
+import '../pages/map_page.dart';
+import '../pages/profile_page.dart';
+import '../pages/shuttle_page.dart';
 import 'app_routes.dart';
 
 class RouteGenerator {
-  static Widget screenFor(
+  static Widget pageFor(
     String route, {
     required DeviceType device,
     required SectionNavigator onSectionChanged,
@@ -19,27 +19,27 @@ class RouteGenerator {
   }) {
     switch (route) {
       case AppRoutes.map:
-        return MapScreen(
+        return MapPage(
           device: device,
           onSectionChanged: onSectionChanged,
           onToast: onToast,
         );
       case AppRoutes.indoor:
-        return IndoorScreen(
+        return IndoorPage(
           device: device,
           onSectionChanged: onSectionChanged,
           onToast: onToast,
         );
       case AppRoutes.shuttle:
-        return ShuttleScreen(device: device, onToast: onToast);
+        return ShuttlePage(device: device, onToast: onToast);
       case AppRoutes.events:
-        return EventsScreen(device: device, onToast: onToast);
+        return EventsPage(device: device, onToast: onToast);
       case AppRoutes.community:
-        return CommunityScreen(device: device, onToast: onToast);
+        return CommunityPage(device: device, onToast: onToast);
       case AppRoutes.profile:
-        return ProfileScreen(device: device, onToast: onToast);
+        return ProfilePage(device: device, onToast: onToast);
       default:
-        return UnknownScreen(route: route);
+        return UnknownPage(route: route);
     }
   }
 
@@ -63,8 +63,8 @@ class RouteGenerator {
   }
 }
 
-class UnknownScreen extends StatelessWidget {
-  const UnknownScreen({super.key, required this.route});
+class UnknownPage extends StatelessWidget {
+  const UnknownPage({super.key, required this.route});
 
   final String route;
 

@@ -19,8 +19,8 @@ import '../widgets/search_row.dart';
 import '../widgets/segmented.dart';
 import '../widgets/status_chip.dart';
 
-class CommunityScreen extends StatelessWidget {
-  const CommunityScreen({
+class CommunityPage extends StatelessWidget {
+  const CommunityPage({
     super.key,
     required this.device,
     required this.onToast,

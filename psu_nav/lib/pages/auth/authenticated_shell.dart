@@ -2,12 +2,12 @@ import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../app/app_colors.dart';
+import '../../app/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../bloc/navigation/navigation_bloc.dart';
 import '../../widgets/shell/prototype_shell.dart';
-import '../../app/app_theme.dart';
 
 class AuthenticatedShell extends StatefulWidget {
   const AuthenticatedShell({super.key});
