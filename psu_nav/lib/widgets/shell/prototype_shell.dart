@@ -12,6 +12,7 @@ class PrototypeShell extends StatelessWidget {
   const PrototypeShell({
     super.key,
     required this.currentRoute,
+    required this.indoorRoomCode,
     required this.device,
     required this.onNavigate,
     required this.onToast,
@@ -21,6 +22,7 @@ class PrototypeShell extends StatelessWidget {
   });
 
   final String currentRoute;
+  final String? indoorRoomCode;
   final DeviceType device;
   final SectionNavigator onNavigate;
   final ValueChanged<String> onToast;
@@ -33,13 +35,14 @@ class PrototypeShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screen = Stack(
-      key: ValueKey(currentRoute),
+      key: ValueKey((currentRoute, indoorRoomCode)),
       children: [
         RouteGenerator.pageFor(
           currentRoute,
           device: device,
           onSectionChanged: onNavigate,
           onToast: onToast,
+          indoorRoomCode: indoorRoomCode,
         ),
         if (isTransitioning)
           const Positioned.fill(child: RouteTransitionOverlay()),

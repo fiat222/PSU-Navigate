@@ -53,48 +53,45 @@ class RoomBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final w = constraints.maxWidth * widthPercent;
-        final h = constraints.maxHeight * heightPercent;
-        return Positioned(
-          left: constraints.maxWidth * leftPercent,
-          top: constraints.maxHeight * topPercent,
-          width: w,
-          height: h,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Positioned.fill(
-                child: Material(
-                  color: hot ? AppColors.roomHot : AppColors.softRoom,
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: hot ? AppColors.campus : AppColors.roomIdle,
-                    ),
-                    borderRadius: BorderRadius.circular(AppLayout.radiusSm),
+    final x = (2 * leftPercent / (1 - widthPercent)) - 1;
+    final y = (2 * topPercent / (1 - heightPercent)) - 1;
+    return Align(
+      alignment: Alignment(x, y),
+      child: FractionallySizedBox(
+        widthFactor: widthPercent,
+        heightFactor: heightPercent,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: Material(
+                color: hot ? AppColors.roomHot : AppColors.softRoom,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: hot ? AppColors.campus : AppColors.roomIdle,
                   ),
-                  child: InkWell(
-                    onTap: onTap,
-                    borderRadius: BorderRadius.circular(AppLayout.radiusSm),
-                    child: Center(
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          color: hot ? AppColors.campus : AppColors.muted,
-                          fontSize: 11,
-                          fontWeight: hot ? FontWeight.w900 : FontWeight.w500,
-                        ),
+                  borderRadius: BorderRadius.circular(AppLayout.radiusSm),
+                ),
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(AppLayout.radiusSm),
+                  child: Center(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: hot ? AppColors.campus : AppColors.muted,
+                        fontSize: 11,
+                        fontWeight: hot ? FontWeight.w900 : FontWeight.w500,
                       ),
                     ),
                   ),
                 ),
               ),
-              if (hot) const Positioned(top: -6, right: -6, child: _HotDot()),
-            ],
-          ),
-        );
-      },
+            ),
+            if (hot) const Positioned(top: -6, right: -6, child: _HotDot()),
+          ],
+        ),
+      ),
     );
   }
 }

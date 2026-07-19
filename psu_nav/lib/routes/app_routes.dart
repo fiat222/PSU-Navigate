@@ -7,4 +7,5 @@ class AppRoutes {
   static const String profile = '/profile';
 }
 
-typedef SectionNavigator = void Function(String route, {String? toast});
+typedef SectionNavigator =
+    void Function(String route, {String? toast, String? indoorRoomCode});

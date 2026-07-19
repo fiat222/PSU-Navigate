@@ -115,8 +115,8 @@ class ShuttleBloc extends Bloc<ShuttleEvent, ShuttleState> {
         state.copyWith(
           notifiedStops: next,
           toastMessage: enabled
-              ? 'เปิด push notification สำหรับป้ายนี้แล้ว'
-              : 'ปิดแจ้งเตือนป้ายนี้แล้ว',
+              ? 'เปิดการติดตามป้ายแล้ว · บันทึกเฉพาะเซสชันต้นแบบนี้'
+              : 'ปิดการติดตามป้ายแล้ว · บันทึกเฉพาะเซสชันต้นแบบนี้',
         ),
       );
     });

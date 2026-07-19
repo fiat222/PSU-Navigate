@@ -9,25 +9,32 @@ class NavigationState extends Equatable {
     this.isTransitioning = false,
     this.notificationsEnabled = true,
     this.pendingToast,
+    this.indoorRoomCode,
   });
 
   final String currentRoute;
   final bool isTransitioning;
   final bool notificationsEnabled;
   final String? pendingToast;
+  final String? indoorRoomCode;
 
   NavigationState copyWith({
     String? currentRoute,
     bool? isTransitioning,
     bool? notificationsEnabled,
     String? pendingToast,
+    String? indoorRoomCode,
     bool clearToast = false,
+    bool clearIndoorRoomCode = false,
   }) {
     return NavigationState(
       currentRoute: currentRoute ?? this.currentRoute,
       isTransitioning: isTransitioning ?? this.isTransitioning,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       pendingToast: clearToast ? null : (pendingToast ?? this.pendingToast),
+      indoorRoomCode: clearIndoorRoomCode
+          ? null
+          : (indoorRoomCode ?? this.indoorRoomCode),
     );
   }
 
@@ -37,6 +44,7 @@ class NavigationState extends Equatable {
     isTransitioning,
     notificationsEnabled,
     pendingToast,
+    indoorRoomCode,
   ];
 }
 
@@ -48,12 +56,13 @@ abstract class NavigationEvent extends Equatable {
 }
 
 class NavigateTo extends NavigationEvent {
-  const NavigateTo(this.route, {this.toast});
+  const NavigateTo(this.route, {this.toast, this.indoorRoomCode});
   final String route;
   final String? toast;
+  final String? indoorRoomCode;
 
   @override
-  List<Object?> get props => [route, toast];
+  List<Object?> get props => [route, toast, indoorRoomCode];
 }
 
 class TransitionFinished extends NavigationEvent {
@@ -71,12 +80,21 @@ class NavigationToastShown extends NavigationEvent {
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   NavigationBloc() : super(const NavigationState()) {
     on<NavigateTo>((event, emit) {
-      if (event.route == state.currentRoute && !state.isTransitioning) return;
+      final indoorRoomCode = event.route == AppRoutes.indoor
+          ? event.indoorRoomCode
+          : null;
+      if (event.route == state.currentRoute &&
+          indoorRoomCode == state.indoorRoomCode &&
+          !state.isTransitioning) {
+        return;
+      }
       emit(
         state.copyWith(
           currentRoute: event.route,
           isTransitioning: true,
           pendingToast: event.toast,
+          indoorRoomCode: indoorRoomCode,
+          clearIndoorRoomCode: indoorRoomCode == null,
         ),
       );
       Future<void>.delayed(const Duration(milliseconds: 220), () {
@@ -90,7 +108,15 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     });
 
     on<ToggleNotifications>((event, emit) {
-      emit(state.copyWith(notificationsEnabled: !state.notificationsEnabled));
+      final enabled = !state.notificationsEnabled;
+      emit(
+        state.copyWith(
+          notificationsEnabled: enabled,
+          pendingToast: enabled
+              ? 'เปิดการแจ้งเตือนแล้ว · บันทึกเฉพาะเซสชันต้นแบบนี้'
+              : 'ปิดการแจ้งเตือนแล้ว · บันทึกเฉพาะเซสชันต้นแบบนี้',
+        ),
+      );
     });
 
     on<NavigationToastShown>((event, emit) {

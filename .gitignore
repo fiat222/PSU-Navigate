@@ -1,2 +1,5 @@
 Slide/
 docs/
+!docs/
+docs/*
+!docs/SRS.md

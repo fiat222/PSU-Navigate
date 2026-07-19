@@ -90,10 +90,15 @@ const List<IndoorRoom> kIndoorRooms = [
 ];
 
 class IndoorState extends Equatable {
-  const IndoorState({this.floor = 3, this.selectedCode = 'ENG-302'});
+  const IndoorState({
+    this.floor = 3,
+    this.selectedCode = 'ENG-302',
+    this.searchFeedback,
+  });
 
   final int floor;
   final String selectedCode;
+  final String? searchFeedback;
 
   IndoorRoom? get selectedRoom {
     for (final r in kIndoorRooms) {
@@ -102,15 +107,23 @@ class IndoorState extends Equatable {
     return null;
   }
 
-  IndoorState copyWith({int? floor, String? selectedCode}) {
+  IndoorState copyWith({
+    int? floor,
+    String? selectedCode,
+    String? searchFeedback,
+    bool clearSearchFeedback = false,
+  }) {
     return IndoorState(
       floor: floor ?? this.floor,
       selectedCode: selectedCode ?? this.selectedCode,
+      searchFeedback: clearSearchFeedback
+          ? null
+          : (searchFeedback ?? this.searchFeedback),
     );
   }
 
   @override
-  List<Object?> get props => [floor, selectedCode];
+  List<Object?> get props => [floor, selectedCode, searchFeedback];
 }
 
 abstract class IndoorEvent extends Equatable {
@@ -133,9 +146,56 @@ class SelectRoom extends IndoorEvent {
   List<Object?> get props => [code];
 }
 
+class SearchRoomRequested extends IndoorEvent {
+  const SearchRoomRequested(this.query);
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class IndoorSearchFeedbackShown extends IndoorEvent {
+  const IndoorSearchFeedbackShown();
+}
+
 class IndoorBloc extends Bloc<IndoorEvent, IndoorState> {
-  IndoorBloc() : super(const IndoorState()) {
+  IndoorBloc({String? initialRoomCode})
+    : super(_initialStateFor(initialRoomCode)) {
     on<ChangeFloor>((e, emit) => emit(state.copyWith(floor: e.floor)));
     on<SelectRoom>((e, emit) => emit(state.copyWith(selectedCode: e.code)));
+    on<SearchRoomRequested>((e, emit) {
+      final query = e.query.trim().toLowerCase();
+      IndoorRoom? match;
+      for (final room in kIndoorRooms) {
+        if (room.code.toLowerCase() == query ||
+            room.title.toLowerCase() == query) {
+          match = room;
+          break;
+        }
+      }
+      if (match == null) {
+        emit(state.copyWith(searchFeedback: 'ไม่พบในข้อมูลตัวอย่าง'));
+        return;
+      }
+      emit(
+        state.copyWith(
+          floor: match.floor,
+          selectedCode: match.code,
+          searchFeedback: 'Prototype: พบ ${match.code} ในข้อมูลตัวอย่าง',
+        ),
+      );
+    });
+    on<IndoorSearchFeedbackShown>(
+      (e, emit) => emit(state.copyWith(clearSearchFeedback: true)),
+    );
+  }
+
+  static IndoorState _initialStateFor(String? roomCode) {
+    for (final room in kIndoorRooms) {
+      if (room.code == roomCode) {
+        return IndoorState(floor: room.floor, selectedCode: room.code);
+      }
+    }
+    return const IndoorState();
   }
 }

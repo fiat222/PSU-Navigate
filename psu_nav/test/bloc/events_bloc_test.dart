@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:psu_nav/bloc/events/events_bloc.dart';
 import 'package:psu_nav/data/repositories/event_repository.dart';
+import 'package:psu_nav/data/repositories/mock_event_repository.dart';
 import 'package:psu_nav/models/event_item.dart';
 
 void main() {
@@ -33,6 +34,17 @@ void main() {
     );
 
     expect(failed.errorMessage, 'จับคู่ไม่สำเร็จ กรุณาลองใหม่');
+  });
+
+  test('mock random match describes a session-only prototype result', () async {
+    final result = await MockEventRepository(
+      delay: Duration.zero,
+    ).randomMatch();
+
+    expect(result.partnerName, isNotEmpty);
+    expect(result.message, contains(result.partnerName));
+    expect(result.message, contains('session นี้'));
+    expect(result.message, contains('ยังไม่มีระบบแชทใน prototype'));
   });
 }
 

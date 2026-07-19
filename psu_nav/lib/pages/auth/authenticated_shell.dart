@@ -31,17 +31,14 @@ class _AuthenticatedShellState extends State<AuthenticatedShell> {
       );
   }
 
-  void _onNavigate(String route, {String? toast}) {
-    context.read<NavigationBloc>().add(NavigateTo(route, toast: toast));
+  void _onNavigate(String route, {String? toast, String? indoorRoomCode}) {
+    context.read<NavigationBloc>().add(
+      NavigateTo(route, toast: toast, indoorRoomCode: indoorRoomCode),
+    );
   }
 
   void _onToggleNotifications() {
-    final bloc = context.read<NavigationBloc>();
-    final enabled = bloc.state.notificationsEnabled;
-    bloc.add(const ToggleNotifications());
-    _showToast(
-      enabled ? 'ปิดการแจ้งเตือนทั้งหมดแล้ว' : 'เปิดการแจ้งเตือนทั้งหมดแล้ว',
-    );
+    context.read<NavigationBloc>().add(const ToggleNotifications());
   }
 
   @override
@@ -75,6 +72,7 @@ class _AuthenticatedShellState extends State<AuthenticatedShell> {
                 builder: (context, constraints) {
                   return PrototypeShell(
                     currentRoute: state.currentRoute,
+                    indoorRoomCode: state.indoorRoomCode,
                     device: AppLayout.deviceFor(constraints.maxWidth),
                     isTransitioning: state.isTransitioning,
                     notificationsEnabled: state.notificationsEnabled,

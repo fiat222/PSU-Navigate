@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +12,57 @@ import 'package:psu_nav/pages/events_page.dart';
 import 'package:psu_nav/pages/shuttle_page.dart';
 
 void main() {
+  testWidgets('EventsPage renders random match and forwards callbacks', (
+    tester,
+  ) async {
+    final repo = _InteractionEventRepository();
+    final toasts = <String>[];
+    await tester.pumpWidget(
+      RepositoryProvider<EventRepository>.value(
+        value: repo,
+        child: MaterialApp(
+          home: Scaffold(
+            body: EventsPage(device: DeviceType.phone, onToast: toasts.add),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Plan'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('สุ่มจับคู่จากข้อมูลผู้ใช้ตัวอย่างใน prototype'),
+      findsOneWidget,
+    );
+    expect(find.text('กิจกรรมแบบ Plan'), findsOneWidget);
+
+    await tester.tap(find.text('จับคู่เลย'));
+    await tester.pump();
+
+    expect(repo.randomMatchCalls, 1);
+    expect(find.text('กำลังสุ่มจากข้อมูลผู้ใช้ตัวอย่าง...'), findsOneWidget);
+
+    repo.matchCompleter.complete(
+      const MatchResult(partnerName: 'เพื่อน', message: 'จับคู่สำเร็จ'),
+    );
+    await tester.pumpAndSettle();
+    expect(toasts, contains('จับคู่สำเร็จ'));
+
+    await tester.tap(find.text('สนใจ'));
+    await tester.pump();
+
+    expect(repo.joinedEventIds, ['event-plan']);
+    expect(find.text('กำลังส่งความสนใจ...'), findsOneWidget);
+
+    repo.joinCompleter.complete(
+      JoinResult(event: repo.event, message: 'ส่งความสนใจแล้ว'),
+    );
+    await tester.pumpAndSettle();
+    expect(toasts, contains('ส่งความสนใจแล้ว'));
+  });
+
   testWidgets('EventsPage shows retry and recovers from load failure', (
     tester,
   ) async {
@@ -88,6 +141,40 @@ class _RetryEventRepository implements EventRepository {
   @override
   Future<MatchResult> randomMatch() async {
     return const MatchResult(partnerName: 'เพื่อน', message: 'สำเร็จ');
+  }
+}
+
+class _InteractionEventRepository implements EventRepository {
+  final matchCompleter = Completer<MatchResult>();
+  final joinCompleter = Completer<JoinResult>();
+  final joinedEventIds = <String>[];
+  var randomMatchCalls = 0;
+
+  final event = EventItem(
+    id: 'event-plan',
+    title: 'กิจกรรมแบบ Plan',
+    subtitle: 'รายละเอียดตัวอย่าง',
+    kind: EventKind.plan,
+    tags: const ['plan'],
+    startsAt: DateTime.now().add(const Duration(hours: 1)),
+    popularityScore: 1,
+    interestedCount: 1,
+    actionLabel: 'สนใจ',
+  );
+
+  @override
+  Future<List<EventItem>> fetchEvents() async => [event];
+
+  @override
+  Future<JoinResult> joinPlan(String eventId) {
+    joinedEventIds.add(eventId);
+    return joinCompleter.future;
+  }
+
+  @override
+  Future<MatchResult> randomMatch() {
+    randomMatchCalls++;
+    return matchCompleter.future;
   }
 }
 

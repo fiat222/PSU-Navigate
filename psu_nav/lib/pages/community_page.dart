@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../app/app_colors.dart';
 import '../app/app_theme.dart';
 import '../bloc/community/community_bloc.dart';
 import '../bloc/community/community_event.dart';
 import '../bloc/community/community_state.dart';
 import '../data/repositories/place_repository.dart';
+import '../models/comment_item.dart';
 import '../models/place_discussion.dart';
 import '../widgets/common/error_state.dart';
 import '../widgets/common/loading_indicator.dart';
 import '../widgets/common/responsive_list.dart';
 import '../widgets/common/skeleton.dart';
 import '../widgets/community/category_chips.dart';
+import '../widgets/community/comment_card.dart';
+import '../widgets/community/community_composer.dart';
+import '../widgets/community/community_detail_toolbar.dart';
 import '../widgets/community/place_discussion_card.dart';
 import '../widgets/community/place_search_field.dart';
+import '../widgets/community/rating_dialog.dart';
 import '../widgets/icon_button.dart';
-import '../widgets/search_row.dart';
 import '../widgets/segmented.dart';
 import '../widgets/status_chip.dart';
 
@@ -67,7 +70,8 @@ class _CommunityBodyState extends State<_CommunityBody> {
               curr.allPlaces.isNotEmpty),
       listener: (context, state) {
         if (state.toastMessage != null) {
-          if (state.toastMessage == 'ส่งคอมเมนต์สำเร็จ') {
+          if (state.toastMessage == 'ส่งคอมเมนต์สำเร็จ' ||
+              state.toastMessage == 'Prototype: เพิ่มคำตอบใน session นี้แล้ว') {
             _controller.clear();
           }
           widget.onToast(state.toastMessage!);
@@ -112,10 +116,9 @@ class _CommunityBodyState extends State<_CommunityBody> {
 
           return _PlaceDetailView(
             place: place,
+            state: state,
             device: widget.device,
             controller: _controller,
-            posting: state.posting,
-            detailSegmentIndex: state.detailSegmentIndex,
             onToast: widget.onToast,
           );
         },
@@ -209,52 +212,146 @@ class _PlaceListView extends StatelessWidget {
 class _PlaceDetailView extends StatelessWidget {
   const _PlaceDetailView({
     required this.place,
+    required this.state,
     required this.device,
     required this.controller,
-    required this.posting,
-    required this.detailSegmentIndex,
     required this.onToast,
   });
 
   final PlaceDiscussion place;
+  final CommunityState state;
   final DeviceType device;
   final TextEditingController controller;
-  final bool posting;
-  final int detailSegmentIndex;
   final ValueChanged<String> onToast;
 
   void _post(BuildContext context) {
-    context.read<CommunityBloc>().add(PostComment(controller.text));
+    final bloc = context.read<CommunityBloc>();
+    if (state.replyTargetId == null) {
+      bloc.add(PostComment(controller.text));
+    } else {
+      bloc.add(SubmitReply(controller.text));
+    }
+  }
+
+  Future<void> _rate(BuildContext context) async {
+    final rating = await showDialog<int>(
+      context: context,
+      builder: (context) => const RatingDialog(),
+    );
+    if (rating != null && context.mounted) {
+      context.read<CommunityBloc>().add(RateSelectedPlace(rating));
+    }
+  }
+
+  Future<void> _report(BuildContext context, String commentId) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('ยืนยันการรายงาน'),
+        content: const Text('Prototype: รายงานนี้มีผลเฉพาะ session นี้'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('ยกเลิก'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('ยืนยันรายงาน'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<CommunityBloc>().add(ReportComment(commentId));
+    }
+  }
+
+  String? get _replyTargetName {
+    final targetId = state.replyTargetId;
+    if (targetId == null) return null;
+    for (final comment in place.comments) {
+      if (comment.id == targetId) return comment.name;
+    }
+    return null;
+  }
+
+  CommentCard _commentCard(
+    BuildContext context,
+    CommentItem comment, {
+    bool nested = false,
+  }) {
+    return CommentCard(
+      comment: comment,
+      nested: nested,
+      isLiked: state.likedCommentIds.contains(comment.id),
+      isReported: state.reportedCommentIds.contains(comment.id),
+      onLike: () =>
+          context.read<CommunityBloc>().add(ToggleCommentLike(comment.id)),
+      onReply: nested
+          ? null
+          : () => context.read<CommunityBloc>().add(StartReply(comment.id)),
+      onReport: state.reportInProgress
+          ? null
+          : () => _report(context, comment.id),
+      replies: nested
+          ? const []
+          : [
+              for (final reply in comment.replies)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _commentCard(context, reply, nested: true),
+                ),
+            ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final composer = CommunityComposer(
+      controller: controller,
+      posting: state.posting,
+      replying: state.replyInProgress,
+      replyTargetName: _replyTargetName,
+      onCancelReply: () =>
+          context.read<CommunityBloc>().add(const CancelReply()),
+      onSubmit: () => _post(context),
+      onImage: () => onToast('Prototype: การแนบรูปยังไม่พร้อมใช้งาน'),
+    );
     return Column(
       children: [
-        SearchRow(
-          value: place.name,
-          leading: Icons.arrow_back,
-          onLeading: () =>
-              context.read<CommunityBloc>().add(const DeselectPlace()),
-          trailing: Icons.star_border,
-          onTrailing: () => onToast('ให้คะแนนสถานที่นี้ 5 ดาว'),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: Segmented(
-                  labels: const ['ล่าสุด', 'ยอดนิยม', 'รูปภาพ'],
-                  selected: detailSegmentIndex,
-                  onChanged: (index) => context.read<CommunityBloc>().add(
-                    ChangeDetailSegment(index),
+        Flexible(
+          fit: FlexFit.loose,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CommunityDetailToolbar(
+                  placeName: place.name,
+                  sessionRating: state.ratingsByPlace[place.id],
+                  onBack: () =>
+                      context.read<CommunityBloc>().add(const DeselectPlace()),
+                  onRate: () => _rate(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Segmented(
+                          labels: const ['ล่าสุด', 'ยอดนิยม', 'รูปภาพ'],
+                          selected: state.detailSegmentIndex,
+                          onChanged: (index) => context
+                              .read<CommunityBloc>()
+                              .add(ChangeDetailSegment(index)),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      StatusChip(place.statusLabel),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              StatusChip(place.statusLabel),
-            ],
+              ],
+            ),
           ),
         ),
         Expanded(
@@ -263,57 +360,12 @@ class _PlaceDetailView extends StatelessWidget {
             children: [
               PlaceHeader(place: place),
               for (final comment in place.comments)
-                CommentCard(comment: comment),
+                _commentCard(context, comment),
               const ModerationCard(),
             ],
           ),
         ),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(top: BorderSide(color: AppColors.line)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (posting) const LinearProgressIndicator(minHeight: 2),
-              if (posting) const SizedBox(height: 8),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icons.image_outlined,
-                    onTap: () => onToast('เลือกรูปได้สูงสุด 3 รูปต่อคอมเมนต์'),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      enabled: !posting,
-                      decoration: InputDecoration(
-                        hintText: 'แชร์ข้อมูลสถานที่นี้...',
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.line),
-                        ),
-                      ),
-                      onSubmitted: (_) => _post(context),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: posting ? Icons.hourglass_top : Icons.send_outlined,
-                    onTap: posting ? null : () => _post(context),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+        composer,
       ],
     );
   }

@@ -6,9 +6,10 @@ import '../routes/app_routes.dart';
 import '../widgets/map/campus_map_background.dart';
 import '../widgets/map/map_pin.dart';
 import '../widgets/map/place_card.dart';
-import '../widgets/search_row.dart';
+import '../widgets/common/search_field.dart';
+import '../widgets/icon_button.dart';
 
-class MapPage extends StatelessWidget {
+class MapPage extends StatefulWidget {
   const MapPage({
     super.key,
     required this.device,
@@ -21,16 +22,56 @@ class MapPage extends StatelessWidget {
   final ValueChanged<String> onToast;
 
   @override
+  State<MapPage> createState() => _MapPageState();
+}
+
+class _MapPageState extends State<MapPage> {
+  String _query = '';
+
+  void _search([String? submitted]) {
+    final query = (submitted ?? _query).trim().toLowerCase();
+    final destination = switch (query) {
+      'eng-301' || 'วิศวกรรม' => (AppRoutes.indoor, 'ENG-301'),
+      'ป้ายรถ' || 'รถ' => (AppRoutes.shuttle, 'ป้ายรถ'),
+      'โรงอาหาร' => (AppRoutes.community, 'โรงอาหาร'),
+      _ => null,
+    };
+    if (destination == null) {
+      widget.onToast('ไม่พบในข้อมูลตัวอย่าง');
+      return;
+    }
+    widget.onSectionChanged(
+      destination.$1,
+      toast: 'Prototype: พบ ${destination.$2} ในข้อมูลตัวอย่าง',
+      indoorRoomCode: destination.$1 == AppRoutes.indoor
+          ? destination.$2
+          : null,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final horizontal = device == DeviceType.phone ? 16.0 : 22.0;
+    final horizontal = widget.device == DeviceType.phone ? 16.0 : 22.0;
 
     return Column(
       children: [
-        SearchRow(
-          value: 'ENG-301 อาคารวิศวกรรมศาสตร์ 1',
-          trailing: Icons.tune,
-          onTrailing: () =>
-              onToast('ค้นหาแล้ว: ENG-301 อยู่ชั้น 3 อาคารวิศวกรรมศาสตร์ 1'),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: SearchField(
+                  key: const Key('map-search-field'),
+                  value: _query,
+                  hint: 'ค้นหาสถานที่หรือห้อง',
+                  onChanged: (value) => _query = value,
+                  onSubmitted: _search,
+                ),
+              ),
+              const SizedBox(width: 10),
+              IconButton(icon: Icons.tune, onTap: _search),
+            ],
+          ),
         ),
         Expanded(
           child: Padding(
@@ -45,7 +86,7 @@ class MapPage extends StatelessWidget {
                     left: 14,
                     child: MapLabel(
                       title: 'Outdoor map mode',
-                      subtitle: 'Google Maps + PSU overlay',
+                      subtitle: 'แผนที่จำลอง + PSU prototype overlay',
                     ),
                   ),
                   MapPin(
@@ -54,7 +95,7 @@ class MapPage extends StatelessWidget {
                     icon: Icons.apartment,
                     label: 'วิศวกรรม 1',
                     color: AppColors.campus,
-                    onTap: () => onSectionChanged(
+                    onTap: () => widget.onSectionChanged(
                       AppRoutes.indoor,
                       toast:
                           'เข้าสู่ Indoor View: อาคารวิศวกรรมศาสตร์ 1 ชั้น 3',
@@ -66,7 +107,7 @@ class MapPage extends StatelessWidget {
                     icon: Icons.restaurant_outlined,
                     label: 'โรงอาหารกลาง',
                     color: AppColors.sun,
-                    onTap: () => onSectionChanged(AppRoutes.community),
+                    onTap: () => widget.onSectionChanged(AppRoutes.community),
                   ),
                   MapPin(
                     leftPercent: .29,
@@ -74,7 +115,7 @@ class MapPage extends StatelessWidget {
                     icon: Icons.directions_bus_outlined,
                     label: 'ป้ายรถ A',
                     color: AppColors.campus3,
-                    onTap: () => onSectionChanged(AppRoutes.shuttle),
+                    onTap: () => widget.onSectionChanged(AppRoutes.shuttle),
                   ),
                   Positioned(
                     left: 12,
@@ -85,12 +126,14 @@ class MapPage extends StatelessWidget {
                         maxHeight: MediaQuery.of(context).size.height * 0.45,
                       ),
                       child: PlaceCard(
-                        onIndoor: () => onSectionChanged(AppRoutes.indoor),
+                        onIndoor: () =>
+                            widget.onSectionChanged(AppRoutes.indoor),
                         onCommunity: () =>
-                            onSectionChanged(AppRoutes.community),
-                        onNavigate: () => onSectionChanged(
+                            widget.onSectionChanged(AppRoutes.community),
+                        onNavigate: () => widget.onSectionChanged(
                           AppRoutes.indoor,
-                          toast: 'เริ่ม route ไปอาคารวิศวกรรมศาสตร์ 1',
+                          toast:
+                              'Prototype: เปิด Indoor View ของอาคารวิศวกรรมศาสตร์ 1 · ยังไม่ได้คำนวณเส้นทางจริง',
                         ),
                       ),
                     ),

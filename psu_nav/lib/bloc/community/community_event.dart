@@ -65,6 +65,50 @@ class PostComment extends CommunityEvent {
   List<Object?> get props => [text];
 }
 
+class RateSelectedPlace extends CommunityEvent {
+  const RateSelectedPlace(this.rating);
+  final int rating;
+
+  @override
+  List<Object?> get props => [rating];
+}
+
+class ToggleCommentLike extends CommunityEvent {
+  const ToggleCommentLike(this.commentId);
+  final String commentId;
+
+  @override
+  List<Object?> get props => [commentId];
+}
+
+class StartReply extends CommunityEvent {
+  const StartReply(this.commentId);
+  final String commentId;
+
+  @override
+  List<Object?> get props => [commentId];
+}
+
+class CancelReply extends CommunityEvent {
+  const CancelReply();
+}
+
+class SubmitReply extends CommunityEvent {
+  const SubmitReply(this.text);
+  final String text;
+
+  @override
+  List<Object?> get props => [text];
+}
+
+class ReportComment extends CommunityEvent {
+  const ReportComment(this.commentId);
+  final String commentId;
+
+  @override
+  List<Object?> get props => [commentId];
+}
+
 class ToastShown extends CommunityEvent {
   const ToastShown();
 }

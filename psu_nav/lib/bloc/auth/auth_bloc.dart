@@ -54,12 +54,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           errorMessage: err.message,
         ),
       );
-    } catch (err) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: AuthStatus.unauthenticated,
           submitting: false,
-          errorMessage: 'ไม่สามารถเข้าสู่ระบบได้: $err',
+          errorMessage: 'ไม่สามารถเข้าสู่ระบบได้ กรุณาลองใหม่อีกครั้ง',
         ),
       );
     }
@@ -100,12 +100,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           errorMessage: err.message,
         ),
       );
-    } catch (err) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: AuthStatus.unauthenticated,
           submitting: false,
-          errorMessage: 'สมัครสมาชิกไม่สำเร็จ: $err',
+          errorMessage: 'สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
         ),
       );
     }
@@ -132,11 +132,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
     } on AuthFailure catch (err) {
       emit(state.copyWith(submitting: false, errorMessage: err.message));
-    } catch (err) {
+    } catch (_) {
       emit(
         state.copyWith(
           submitting: false,
-          errorMessage: 'ไม่สามารถบันทึกโปรไฟล์ได้: $err',
+          errorMessage: 'ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่อีกครั้ง',
         ),
       );
     }

@@ -55,7 +55,9 @@ class MockEventRepository implements EventRepository {
         partners[DateTime.now().millisecondsSinceEpoch % partners.length];
     return MatchResult(
       partnerName: pick,
-      message: 'จับคู่สำเร็จ: $pick · แชทจะลบใน 5 นาที',
+      message:
+          'สุ่มคู่ตัวอย่างสำหรับ session นี้: $pick · '
+          'ยังไม่มีระบบแชทใน prototype',
     );
   }
 }

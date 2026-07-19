@@ -6,7 +6,7 @@ final List<EventItem> mockEvents = [
   EventItem(
     id: 'evt-001',
     title: 'Hackathon: Smart Campus',
-    subtitle: 'กิจกรรมจริง · ปักหมุดที่วิศวกรรม 1 · หมดเวลาโพสต์ 18:00',
+    subtitle: 'กิจกรรมตัวอย่าง · ปักหมุดที่วิศวกรรม 1 · หมดเวลาโพสต์ 18:00',
     kind: EventKind.official,
     pillLabel: 'เข้าร่วม',
     icon: Icons.event_outlined,
@@ -29,8 +29,8 @@ final List<EventItem> mockEvents = [
   ),
   EventItem(
     id: 'evt-003',
-    title: 'สุ่มหาเพื่อนแชทชั่วคราว',
-    subtitle: 'จับคู่จากผู้ใช้ online ใน campus · แชทจะลบหลังออกครบ 5 นาที',
+    title: 'สุ่มคู่กิจกรรมตัวอย่าง',
+    subtitle: 'จับคู่จากข้อมูลผู้ใช้ตัวอย่าง · ไม่มีห้องแชทจริงใน prototype',
     kind: EventKind.activity,
     actionLabel: 'สุ่ม',
     icon: Icons.chat_bubble_outline,

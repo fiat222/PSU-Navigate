@@ -78,7 +78,10 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         centerTitle: true,
       ),
-      body: BlocBuilder<AuthBloc, AuthState>(
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listenWhen: (previous, current) =>
+            !previous.isAuthenticated && current.isAuthenticated,
+        listener: (context, state) => Navigator.of(context).pop(),
         builder: (context, state) {
           return SafeArea(
             child: Center(
@@ -221,8 +224,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             onPressed: () => _submit(context),
                           ),
                           const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               const Text(
                                 'มีบัญชีอยู่แล้ว? ',

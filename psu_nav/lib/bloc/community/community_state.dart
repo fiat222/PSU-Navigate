@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../models/place_discussion.dart';
 
 class CommunityState extends Equatable {
-  const CommunityState({
+  CommunityState({
     this.allPlaces = const [],
     this.places = const [],
     this.selectedPlaceId,
@@ -16,7 +16,15 @@ class CommunityState extends Equatable {
     this.posting = false,
     this.refreshing = false,
     this.errorMessage,
-  });
+    Map<String, int> ratingsByPlace = const {},
+    Set<String> likedCommentIds = const {},
+    Set<String> reportedCommentIds = const {},
+    this.replyTargetId,
+    this.replyInProgress = false,
+    this.reportInProgress = false,
+  }) : ratingsByPlace = Map.unmodifiable(ratingsByPlace),
+       likedCommentIds = Set.unmodifiable(likedCommentIds),
+       reportedCommentIds = Set.unmodifiable(reportedCommentIds);
 
   final List<PlaceDiscussion> allPlaces;
   final List<PlaceDiscussion> places;
@@ -30,6 +38,12 @@ class CommunityState extends Equatable {
   final bool posting;
   final bool refreshing;
   final String? errorMessage;
+  final Map<String, int> ratingsByPlace;
+  final Set<String> likedCommentIds;
+  final Set<String> reportedCommentIds;
+  final String? replyTargetId;
+  final bool replyInProgress;
+  final bool reportInProgress;
 
   PlaceDiscussion? get selectedPlace {
     final id = selectedPlaceId;
@@ -59,6 +73,13 @@ class CommunityState extends Equatable {
     bool clearSelected = false,
     bool clearError = false,
     bool clearToast = false,
+    Map<String, int>? ratingsByPlace,
+    Set<String>? likedCommentIds,
+    Set<String>? reportedCommentIds,
+    String? replyTargetId,
+    bool clearReplyTarget = false,
+    bool? replyInProgress,
+    bool? reportInProgress,
   }) {
     return CommunityState(
       allPlaces: allPlaces ?? this.allPlaces,
@@ -77,6 +98,14 @@ class CommunityState extends Equatable {
       posting: posting ?? this.posting,
       refreshing: refreshing ?? this.refreshing,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      ratingsByPlace: ratingsByPlace ?? this.ratingsByPlace,
+      likedCommentIds: likedCommentIds ?? this.likedCommentIds,
+      reportedCommentIds: reportedCommentIds ?? this.reportedCommentIds,
+      replyTargetId: clearReplyTarget
+          ? null
+          : (replyTargetId ?? this.replyTargetId),
+      replyInProgress: replyInProgress ?? this.replyInProgress,
+      reportInProgress: reportInProgress ?? this.reportInProgress,
     );
   }
 
@@ -94,5 +123,11 @@ class CommunityState extends Equatable {
     posting,
     refreshing,
     errorMessage,
+    ratingsByPlace,
+    likedCommentIds,
+    reportedCommentIds,
+    replyTargetId,
+    replyInProgress,
+    reportInProgress,
   ];
 }

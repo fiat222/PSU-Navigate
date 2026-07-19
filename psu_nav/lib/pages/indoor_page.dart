@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide IconButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../app/app_colors.dart';
@@ -6,7 +6,8 @@ import '../app/app_theme.dart';
 import '../bloc/indoor/indoor_bloc.dart';
 import '../routes/app_routes.dart';
 import '../widgets/indoor/floor_plan.dart';
-import '../widgets/search_row.dart';
+import '../widgets/common/search_field.dart';
+import '../widgets/icon_button.dart';
 import '../widgets/soft_pill.dart';
 
 class IndoorPage extends StatelessWidget {
@@ -15,16 +16,18 @@ class IndoorPage extends StatelessWidget {
     required this.device,
     required this.onSectionChanged,
     required this.onToast,
+    this.initialRoomCode,
   });
 
   final DeviceType device;
   final SectionNavigator onSectionChanged;
   final ValueChanged<String> onToast;
+  final String? initialRoomCode;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => IndoorBloc(),
+      create: (_) => IndoorBloc(initialRoomCode: initialRoomCode),
       child: _IndoorBody(
         device: device,
         onSectionChanged: onSectionChanged,
@@ -47,47 +50,74 @@ class _IndoorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<IndoorBloc, IndoorState>(
-      builder: (context, state) {
-        final room = state.selectedRoom;
-        return Column(
-          children: [
-            SearchRow(
-              value: room?.code ?? 'ENG-301 ห้องบรรยายรวม',
-              leading: Icons.arrow_back,
-              onLeading: () => onSectionChanged(AppRoutes.map),
-            ),
-            _FloorTabs(currentFloor: state.floor),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  device == DeviceType.phone ? 16 : 22,
-                  0,
-                  device == DeviceType.phone ? 16 : 22,
-                  12,
+    return BlocListener<IndoorBloc, IndoorState>(
+      listenWhen: (previous, current) =>
+          current.searchFeedback != null &&
+          current.searchFeedback != previous.searchFeedback,
+      listener: (context, state) {
+        onToast(state.searchFeedback!);
+        context.read<IndoorBloc>().add(const IndoorSearchFeedbackShown());
+      },
+      child: BlocBuilder<IndoorBloc, IndoorState>(
+        builder: (context, state) {
+          final room = state.selectedRoom;
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icons.arrow_back,
+                      onTap: () => onSectionChanged(AppRoutes.map),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: SearchField(
+                        key: const Key('indoor-search-field'),
+                        value: room?.code ?? '',
+                        hint: 'ค้นหารหัสหรือชื่อห้อง',
+                        onChanged: (_) {},
+                        onSubmitted: (query) => context.read<IndoorBloc>().add(
+                          SearchRoomRequested(query),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: AppColors.line),
-                    borderRadius: BorderRadius.circular(8),
+              ),
+              _FloorTabs(currentFloor: state.floor),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    device == DeviceType.phone ? 16 : 22,
+                    0,
+                    device == DeviceType.phone ? 16 : 22,
+                    12,
                   ),
-                  child: Stack(
-                    children: [
-                      const FloorPlanBackground(),
-                      for (final r in kIndoorRooms.where(
-                        (r) => r.floor == state.floor,
-                      ))
-                        _positionedRoom(context, r, state.selectedCode),
-                    ],
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: AppColors.line),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Stack(
+                      children: [
+                        const FloorPlanBackground(),
+                        for (final r in kIndoorRooms.where(
+                          (r) => r.floor == state.floor,
+                        ))
+                          _positionedRoom(context, r, state.selectedCode),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            _RoomDetailSheet(room: room),
-          ],
-        );
-      },
+              _RoomDetailSheet(room: room),
+            ],
+          );
+        },
+      ),
     );
   }
 

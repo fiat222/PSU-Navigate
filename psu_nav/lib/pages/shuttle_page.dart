@@ -88,6 +88,8 @@ class _ShuttleBody extends StatelessWidget {
     if (route == null) {
       return const FullScreenLoading(label: 'กำลังเตรียมข้อมูล...');
     }
+    const engineeringStop = 'วิศวกรรมศาสตร์ 1';
+    final engineeringNotified = state.notifiedStops.contains(engineeringStop);
     return ResponsiveList(
       device: device,
       children: [
@@ -100,12 +102,13 @@ class _ShuttleBody extends StatelessWidget {
         InfoCard(
           icon: Icons.notifications_outlined,
           title: 'แจ้งเตือนป้ายประจำ',
-          subtitle: 'เตือนก่อนรถออก 5 นาที และยังดูตารางล่าสุดได้แม้ออฟไลน์',
+          subtitle: 'ติดตามป้ายวิศวกรรมศาสตร์ 1 เฉพาะเซสชันต้นแบบนี้',
           trailing: SmallPrimaryButton(
-            'เปิด',
-            () => onToast(
-              'เปิด push notification สำหรับป้ายวิศวกรรมศาสตร์ 1 แล้ว',
+            engineeringNotified ? 'ปิด' : 'เปิด',
+            () => context.read<ShuttleBloc>().add(
+              const ToggleStopNotify(engineeringStop),
             ),
+            key: const Key('shuttle-engineering-notify'),
           ),
         ),
       ],

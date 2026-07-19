@@ -5,6 +5,25 @@ import 'package:psu_nav/models/shuttle_route.dart';
 
 void main() {
   test(
+    'stop notification toggles state and reports session-only feedback',
+    () async {
+      final bloc = ShuttleBloc(repo: _FakeShuttleRepository());
+      addTearDown(bloc.close);
+
+      bloc.add(const ToggleStopNotify('วิศวกรรมศาสตร์ 1'));
+      final enabled = await bloc.stream.first;
+      expect(enabled.notifiedStops, contains('วิศวกรรมศาสตร์ 1'));
+      expect(enabled.toastMessage, contains('เฉพาะเซสชันต้นแบบนี้'));
+      expect(enabled.toastMessage, isNot(contains('push')));
+
+      bloc.add(const ToggleStopNotify('วิศวกรรมศาสตร์ 1'));
+      final disabled = await bloc.stream.first;
+      expect(disabled.notifiedStops, isNot(contains('วิศวกรรมศาสตร์ 1')));
+      expect(disabled.toastMessage, contains('เฉพาะเซสชันต้นแบบนี้'));
+    },
+  );
+
+  test(
     'ShuttleBloc exposes friendly errors and clears them on retry',
     () async {
       final repo = _FakeShuttleRepository(routeFailures: 1);

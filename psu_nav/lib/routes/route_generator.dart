@@ -16,6 +16,7 @@ class RouteGenerator {
     required DeviceType device,
     required SectionNavigator onSectionChanged,
     required ValueChanged<String> onToast,
+    String? indoorRoomCode,
   }) {
     switch (route) {
       case AppRoutes.map:
@@ -29,6 +30,7 @@ class RouteGenerator {
           device: device,
           onSectionChanged: onSectionChanged,
           onToast: onToast,
+          initialRoomCode: indoorRoomCode,
         );
       case AppRoutes.shuttle:
         return ShuttlePage(device: device, onToast: onToast);
@@ -46,17 +48,17 @@ class RouteGenerator {
   static String subtitleFor(String route) {
     switch (route) {
       case AppRoutes.map:
-        return 'Hat Yai campus · live';
+        return 'Hat Yai campus · Prototype map';
       case AppRoutes.indoor:
         return 'Indoor floor plan · Engineering 1';
       case AppRoutes.shuttle:
-        return 'Realtime shuttle · cached';
+        return 'ตารางรถตัวอย่าง · session นี้';
       case AppRoutes.events:
-        return 'Events and friend plans';
+        return 'Events and friend plans · mock data';
       case AppRoutes.community:
-        return 'Place reviews · live feed';
+        return 'Place reviews · mock feed';
       case AppRoutes.profile:
-        return 'PSU account · notifications';
+        return 'บัญชีตัวอย่าง · session settings';
       default:
         return 'Unknown route';
     }

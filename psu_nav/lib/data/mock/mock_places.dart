@@ -5,6 +5,7 @@ import '../../models/place_discussion.dart';
 
 final List<CommentItem> _p1Comments = [
   const CommentItem(
+    id: 'p-001-comment-001',
     initials: 'ภต',
     name: 'ภูริต',
     time: '5 นาทีที่แล้ว',
@@ -12,6 +13,7 @@ final List<CommentItem> _p1Comments = [
     likes: 12,
     replies: [
       CommentItem(
+        id: 'p-001-reply-001',
         initials: 'วจ',
         name: 'วิจิตร',
         time: '2 นาทีที่แล้ว',
@@ -22,6 +24,7 @@ final List<CommentItem> _p1Comments = [
     ],
   ),
   const CommentItem(
+    id: 'p-001-comment-002',
     initials: 'อม',
     name: 'อามีน',
     time: '1 ชั่วโมงที่แล้ว',
@@ -33,6 +36,7 @@ final List<CommentItem> _p1Comments = [
 
 final List<CommentItem> _p2Comments = [
   const CommentItem(
+    id: 'p-002-comment-001',
     initials: 'ปท',
     name: 'ปฐมพร',
     time: '30 นาทีที่แล้ว',
@@ -41,6 +45,7 @@ final List<CommentItem> _p2Comments = [
     replies: [],
   ),
   const CommentItem(
+    id: 'p-002-comment-002',
     initials: 'นภ',
     name: 'นภา',
     time: '2 ชั่วโมงที่แล้ว',
@@ -52,6 +57,7 @@ final List<CommentItem> _p2Comments = [
 
 final List<CommentItem> _p3Comments = [
   const CommentItem(
+    id: 'p-003-comment-001',
     initials: 'ธน',
     name: 'ธนพล',
     time: 'เมื่อวาน',
@@ -60,6 +66,7 @@ final List<CommentItem> _p3Comments = [
     replies: [],
   ),
   const CommentItem(
+    id: 'p-003-comment-002',
     initials: 'ปน',
     name: 'ปนัดดา',
     time: '3 วันที่แล้ว',
@@ -71,6 +78,7 @@ final List<CommentItem> _p3Comments = [
 
 final List<CommentItem> _p4Comments = [
   const CommentItem(
+    id: 'p-004-comment-001',
     initials: 'กฤ',
     name: 'กฤษณ์',
     time: '15 นาทีที่แล้ว',

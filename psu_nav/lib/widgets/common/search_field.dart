@@ -8,11 +8,13 @@ class SearchField extends StatefulWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.onSubmitted,
     this.hint = 'ค้นหา',
   });
 
   final String value;
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onSubmitted;
   final String hint;
 
   @override
@@ -62,7 +64,12 @@ class _SearchFieldState extends State<SearchField> {
           Expanded(
             child: TextField(
               controller: _controller,
-              onChanged: widget.onChanged,
+              textInputAction: TextInputAction.search,
+              onChanged: (value) {
+                setState(() {});
+                widget.onChanged(value);
+              },
+              onSubmitted: widget.onSubmitted,
               decoration: InputDecoration(
                 isCollapsed: true,
                 border: InputBorder.none,
@@ -79,6 +86,7 @@ class _SearchFieldState extends State<SearchField> {
             InkWell(
               onTap: () {
                 _controller.clear();
+                setState(() {});
                 widget.onChanged('');
               },
               borderRadius: BorderRadius.circular(99),

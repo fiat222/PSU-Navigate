@@ -8,6 +8,7 @@ import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../models/place_discussion.dart';
 import '../../models/user_profile.dart';
+import '../common/error_banner.dart';
 import 'auth_form_fields.dart';
 import 'faculty_picker.dart';
 import 'profile_avatar.dart';
@@ -82,6 +83,10 @@ class _EditProfileFormState extends State<EditProfileForm> {
               label: 'PSU Email',
               value: widget.user.email,
             ),
+            if (state.errorMessage != null) ...[
+              const SizedBox(height: 12),
+              ErrorBanner(message: state.errorMessage!),
+            ],
             const SizedBox(height: 12),
             AuthTextField(
               label: 'ชื่อ-นามสกุล',
@@ -121,7 +126,12 @@ class _EditProfileFormState extends State<EditProfileForm> {
                   child: OutlinedButton(
                     onPressed: state.submitting
                         ? null
-                        : () => Navigator.of(context).pop(),
+                        : () {
+                            context.read<AuthBloc>().add(
+                              const AuthErrorShown(),
+                            );
+                            Navigator.of(context).pop();
+                          },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -181,26 +191,32 @@ class _ReadOnlyField extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: AppColors.muted),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.muted,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.muted,
+                  ),
                 ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.ink,
-                  fontWeight: FontWeight.w700,
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.ink,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

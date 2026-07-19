@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/repositories/place_repository.dart';
+import '../../models/comment_item.dart';
 import '../../models/place_discussion.dart';
 import 'community_event.dart';
 import 'community_state.dart';
 
 class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
-  CommunityBloc({required this.repo})
-    : super(const CommunityState(loading: true)) {
+  CommunityBloc({required this.repo}) : super(CommunityState(loading: true)) {
     on<LoadPlaces>(_onLoad);
     on<ChangeSegment>((e, emit) {
       emit(state.copyWith(segmentIndex: e.index));
@@ -32,9 +32,18 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     });
     on<SelectPlace>(_onSelectPlace);
     on<DeselectPlace>((e, emit) {
-      emit(state.copyWith(clearSelected: true));
+      emit(state.copyWith(clearSelected: true, clearReplyTarget: true));
     });
     on<PostComment>(_onPost);
+    on<RateSelectedPlace>(_onRateSelectedPlace);
+    on<ToggleCommentLike>(_onToggleCommentLike);
+    on<StartReply>(_onStartReply);
+    on<CancelReply>((event, emit) {
+      if (state.replyInProgress) return;
+      emit(state.copyWith(clearReplyTarget: true));
+    });
+    on<SubmitReply>(_onSubmitReply);
+    on<ReportComment>(_onReportComment);
     on<ToastShown>((e, emit) {
       emit(state.copyWith(clearToast: true));
     });
@@ -44,6 +53,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   }
 
   final PlaceRepository repo;
+  int _replySequence = 0;
 
   Future<void> _onLoad(LoadPlaces e, Emitter<CommunityState> emit) async {
     emit(state.copyWith(loading: true, clearError: true));
@@ -64,6 +74,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     emit(
       state.copyWith(
         selectedPlaceId: place.id,
+        clearReplyTarget: state.selectedPlaceId != place.id,
         toastMessage: 'เข้าสู่สถานที่: ${place.name}',
       ),
     );
@@ -104,6 +115,129 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
         ),
       );
     }
+  }
+
+  void _onRateSelectedPlace(
+    RateSelectedPlace event,
+    Emitter<CommunityState> emit,
+  ) {
+    final selected = state.selectedPlace;
+    if (selected == null || event.rating < 1 || event.rating > 5) return;
+    emit(
+      state.copyWith(
+        ratingsByPlace: {...state.ratingsByPlace, selected.id: event.rating},
+        toastMessage: 'บันทึกคะแนน ${event.rating} ดาวสำหรับ session นี้',
+      ),
+    );
+  }
+
+  void _onToggleCommentLike(
+    ToggleCommentLike event,
+    Emitter<CommunityState> emit,
+  ) {
+    if (!_commentExists(event.commentId)) return;
+    final liked = {...state.likedCommentIds};
+    final isLiked = liked.remove(event.commentId);
+    if (!isLiked) liked.add(event.commentId);
+    emit(
+      state.copyWith(
+        likedCommentIds: liked,
+        toastMessage: isLiked
+            ? 'ยกเลิกถูกใจสำหรับ session นี้'
+            : 'ถูกใจแล้วสำหรับ session นี้',
+      ),
+    );
+  }
+
+  void _onStartReply(StartReply event, Emitter<CommunityState> emit) {
+    final selected = state.selectedPlace;
+    if (selected == null || state.replyInProgress) return;
+    if (!selected.comments.any((comment) => comment.id == event.commentId)) {
+      return;
+    }
+    emit(state.copyWith(replyTargetId: event.commentId));
+  }
+
+  Future<void> _onSubmitReply(
+    SubmitReply event,
+    Emitter<CommunityState> emit,
+  ) async {
+    if (state.replyInProgress) return;
+    final text = event.text.trim();
+    final selected = state.selectedPlace;
+    final targetId = state.replyTargetId;
+    if (text.isEmpty || selected == null || targetId == null) {
+      emit(
+        state.copyWith(
+          toastMessage: 'Prototype: เลือกความคิดเห็นและพิมพ์คำตอบก่อนส่ง',
+        ),
+      );
+      return;
+    }
+    if (!selected.comments.any((comment) => comment.id == targetId)) return;
+
+    emit(state.copyWith(replyInProgress: true));
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+
+    final reply = CommentItem(
+      id: 'session-reply-${++_replySequence}',
+      initials: 'คุณ',
+      name: 'ตัวคุณ',
+      text: text,
+    );
+    final updatedPlace = selected.copyWith(
+      comments: selected.comments
+          .map(
+            (comment) => comment.id == targetId
+                ? comment.copyWith(replies: [...comment.replies, reply])
+                : comment,
+          )
+          .toList(),
+    );
+    final allPlaces = state.allPlaces
+        .map((place) => place.id == updatedPlace.id ? updatedPlace : place)
+        .toList();
+    emit(
+      state.copyWith(
+        allPlaces: allPlaces,
+        replyInProgress: false,
+        clearReplyTarget: true,
+        toastMessage: 'Prototype: เพิ่มคำตอบใน session นี้แล้ว',
+      ),
+    );
+    _emitFiltered(emit);
+  }
+
+  Future<void> _onReportComment(
+    ReportComment event,
+    Emitter<CommunityState> emit,
+  ) async {
+    if (state.reportInProgress ||
+        state.reportedCommentIds.contains(event.commentId) ||
+        !_commentExists(event.commentId)) {
+      return;
+    }
+    emit(state.copyWith(reportInProgress: true));
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+    emit(
+      state.copyWith(
+        reportInProgress: false,
+        reportedCommentIds: {...state.reportedCommentIds, event.commentId},
+        toastMessage: 'Prototype: บันทึกรายงานสำหรับ session นี้แล้ว',
+      ),
+    );
+  }
+
+  bool _commentExists(String commentId) {
+    for (final place in state.allPlaces) {
+      for (final comment in place.comments) {
+        if (comment.id == commentId ||
+            comment.replies.any((reply) => reply.id == commentId)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   void _emitFiltered(Emitter<CommunityState> emit) {

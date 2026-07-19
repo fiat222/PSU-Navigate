@@ -8,7 +8,6 @@ import '../mini_icon.dart';
 import '../panel.dart';
 import '../right_pill.dart';
 import '../../models/place_discussion.dart';
-import '../../models/comment_item.dart';
 
 class PlaceDiscussionCard extends StatelessWidget {
   const PlaceDiscussionCard({
@@ -117,69 +116,6 @@ class PlaceDiscussionCard extends StatelessWidget {
   }
 }
 
-class CommentCard extends StatelessWidget {
-  const CommentCard({super.key, required this.comment});
-
-  final CommentItem comment;
-
-  @override
-  Widget build(BuildContext context) {
-    return Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CommentBubble(
-            initials: comment.initials,
-            name: comment.name,
-            time: comment.time,
-            text: comment.text,
-            boxed: false,
-            avatarGap: 10,
-            metaStyle: const TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 12,
-            ),
-            textStyle: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 12,
-              height: 1.45,
-            ),
-            actions: [
-              Text('ถูกใจ ${comment.likes}', style: _toolText),
-              const Text('ตอบกลับ', style: _toolText),
-              const Text('รายงาน', style: _toolText),
-            ],
-          ),
-          if (comment.replies.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.only(left: 44),
-              child: Column(
-                children: [
-                  for (final reply in comment.replies)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: CommentBubble(
-                        initials: reply.initials,
-                        name: reply.name,
-                        time: reply.time,
-                        text: reply.text,
-                        actions: [
-                          Text('ถูกใจ ${reply.likes}', style: _toolText),
-                          const Text('ตอบกลับ', style: _toolText),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
 class ModerationCard extends StatelessWidget {
   const ModerationCard({super.key});
 
@@ -219,7 +155,7 @@ class ModerationCard extends StatelessWidget {
                   spacing: 12,
                   children: [
                     Text('auto moderation', style: _toolText),
-                    Text('WebSocket update', style: _toolText),
+                    Text('อัปเดตจาก mock state', style: _toolText),
                   ],
                 ),
               ],

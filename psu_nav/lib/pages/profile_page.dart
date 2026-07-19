@@ -6,6 +6,7 @@ import '../app/app_theme.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/auth/auth_event.dart';
 import '../bloc/auth/auth_state.dart';
+import '../bloc/navigation/navigation_bloc.dart';
 import '../widgets/auth/edit_profile_modal.dart';
 import '../widgets/common/responsive_list.dart';
 import '../widgets/info_card.dart';
@@ -38,30 +39,44 @@ class ProfilePage extends StatelessWidget {
                       context.read<AuthBloc>().add(const LogoutRequested());
                     },
                   ),
-                  InfoCard(
-                    icon: Icons.notifications_outlined,
-                    title: 'ตารางเรียนและกิจกรรม',
-                    subtitle:
-                        'ENG-302 เริ่ม 09:00 · เตือนในแอปและอีเมลก่อน 15 นาที',
-                    trailing: IconButton(
-                      onPressed: () =>
-                          onToast('บันทึก notification preference แล้ว'),
-                      icon: const Icon(Icons.settings_outlined, size: 18),
-                    ),
+                  BlocBuilder<NavigationBloc, NavigationState>(
+                    builder: (context, navigation) {
+                      final enabled = navigation.notificationsEnabled;
+                      return InfoCard(
+                        icon: enabled
+                            ? Icons.notifications_active_outlined
+                            : Icons.notifications_off_outlined,
+                        title:
+                            'การแจ้งเตือน ${enabled ? 'เปิดอยู่' : 'ปิดอยู่'}',
+                        subtitle: 'การตั้งค่านี้บันทึกเฉพาะเซสชันต้นแบบนี้',
+                        trailing: IconButton(
+                          key: const Key('profile-notifications-toggle'),
+                          onPressed: () => context.read<NavigationBloc>().add(
+                            const ToggleNotifications(),
+                          ),
+                          icon: Icon(
+                            enabled
+                                ? Icons.toggle_on_outlined
+                                : Icons.toggle_off_outlined,
+                            size: 24,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const InfoCard(
-                    icon: Icons.cloud_done_outlined,
-                    title: 'Offline cache',
+                    icon: Icons.inventory_2_outlined,
+                    title: 'ข้อมูลตัวอย่างในแอป',
                     subtitle:
-                        'ตารางรถ, floor plan, place summary และรีวิวล่าสุดถูก cache ในเครื่อง',
-                    trailing: RightPill('ready'),
+                        'ตารางรถ, floor plan, place summary และรีวิวมาจาก mock repository และไม่บันทึกข้าม session',
+                    trailing: RightPill('mock'),
                   ),
                   const InfoCard(
                     icon: Icons.lock_outline,
                     title: 'ความปลอดภัย',
                     subtitle:
-                        'JWT session · mock SSO สำหรับ demo · ไม่มีการเก็บ password จริง',
-                    trailing: RightPill('student'),
+                        'การเข้าสู่ระบบและข้อมูลบัญชีเป็น mock สำหรับ demo เท่านั้น',
+                    trailing: RightPill('prototype'),
                   ),
                 ],
               ),

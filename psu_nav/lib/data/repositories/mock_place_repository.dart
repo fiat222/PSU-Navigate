@@ -9,6 +9,7 @@ class MockPlaceRepository implements PlaceRepository {
 
   final Duration _delay;
   final List<PlaceDiscussion> _store = List<PlaceDiscussion>.from(mockPlaces);
+  int _commentSequence = 0;
 
   @override
   Future<List<PlaceDiscussion>> fetchPlaces() async {
@@ -28,6 +29,7 @@ class MockPlaceRepository implements PlaceRepository {
     }
     final place = _store[index];
     final newComment = CommentItem(
+      id: 'session-comment-${++_commentSequence}',
       initials: 'คุณ',
       name: 'ตัวคุณ',
       time: 'เมื่อสักครู่',

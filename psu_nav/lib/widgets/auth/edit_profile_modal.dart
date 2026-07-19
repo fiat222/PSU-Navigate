@@ -27,15 +27,12 @@ class EditProfileModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewInsets = MediaQuery.of(context).viewInsets.bottom;
     return BlocListener<AuthBloc, AuthState>(
-      listenWhen: (p, c) =>
-          c.toastMessage != p.toastMessage ||
-          c.isAuthenticated != p.isAuthenticated,
-      listener: (context, state) {
-        if (state.toastMessage != null) {
-          Navigator.of(context).pop();
-          context.read<AuthBloc>().add(const AuthToastShown());
-        }
-      },
+      listenWhen: (previous, current) =>
+          previous.submitting &&
+          !current.submitting &&
+          current.errorMessage == null &&
+          current.toastMessage != null,
+      listener: (context, state) => Navigator.of(context).pop(),
       child: Padding(
         padding: EdgeInsets.only(bottom: viewInsets),
         child: Container(
@@ -114,7 +111,10 @@ class _ModalHeader extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.close, color: AppColors.muted, size: 20),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            context.read<AuthBloc>().add(const AuthErrorShown());
+            Navigator.of(context).pop();
+          },
         ),
       ],
     );
