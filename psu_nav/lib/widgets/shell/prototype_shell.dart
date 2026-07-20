@@ -34,19 +34,12 @@ class PrototypeShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screen = Stack(
-      key: ValueKey((currentRoute, indoorRoomCode)),
-      children: [
-        RouteGenerator.pageFor(
-          currentRoute,
-          device: device,
-          onSectionChanged: onNavigate,
-          onToast: onToast,
-          indoorRoomCode: indoorRoomCode,
-        ),
-        if (isTransitioning)
-          const Positioned.fill(child: RouteTransitionOverlay()),
-      ],
+    final screen = RouteGenerator.pageFor(
+      currentRoute,
+      device: device,
+      onSectionChanged: onNavigate,
+      onToast: onToast,
+      indoorRoomCode: indoorRoomCode,
     );
 
     final topBar = TopBar(
