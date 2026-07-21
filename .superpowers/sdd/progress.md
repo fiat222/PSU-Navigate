@@ -1,6 +1,0 @@
-Task 1: complete (working tree, auth suite 8/8, review clean)
-Task 2: complete (working tree, search 5/5 and preferences 4/4, review clean; minor test gaps strengthened)
-Task 3: complete (working tree, Community combined 18/18, review clean after stale reply-target fix)
-Task 4: complete (responsive file 28/28 and directory 29/29, review clean)
-Task 5: complete (focused tests 8/8, architecture guard 3/3, analyze clean, review clean after SRS delivery fix)
-Task 6: complete (format 97/0, analyze clean, full suite 78/78, final review clean)
