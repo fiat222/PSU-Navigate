@@ -3,3 +3,11 @@ docs/
 !docs/
 docs/*
 !docs/SRS.md
+.agents/
+.superpowers/
+.vscode/
+ConceptOfOperation_Template.docx
+ConceptOfOperation_Template.pdf
+FRONTEND_PROTOTYPE_ASSESSMENT.md
+PRESENTATION_WIDGET_IMPROVEMENT.md
+psu_campus_navigator_mockup.html
